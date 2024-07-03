@@ -22,6 +22,7 @@ from blueprints.restaurants import restaurants_bp
 from blueprints.generateqr import generateqr_bp
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from api.models import db
 
 
 
@@ -38,7 +39,6 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
-db = SQLAlchemy(app)
 CORS(app)
 
 app.config["JWT_SECRET_KEY"] = "super-secret"  # ¡Cambia las palabras "super-secret" por otra cosa!

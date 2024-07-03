@@ -4,7 +4,7 @@ from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
 from models import User, Table, Restaurant, Menu, Order, OrderItem, Invoice
 from flask_admin.contrib.sqla import ModelView
-from app import db
+from api.models import db
 
 
 def setup_admin(app):

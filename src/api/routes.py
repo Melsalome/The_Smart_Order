@@ -8,7 +8,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import io
 import qrcode
 from flask import Flask, request, jsonify, url_for, Blueprint, send_file
-from app import db
+from api.models import db
 from models import User, Table, Restaurant, Menu, Order, OrderItem
 from api.utils import generate_sitemap, APIException
 
