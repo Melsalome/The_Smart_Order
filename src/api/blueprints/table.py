@@ -1,6 +1,6 @@
 """
     Blueprints que definen las rutas de API para las mesas
-    
+
     Definen las rutas de API para gestionar mesas y productos.
     Utilizan las funciones de servicios para interactuar con la base de datos y procesar la lógica de negocio.
 """
@@ -11,7 +11,7 @@ from services.sessionServices import create_session
 from services.invoiceServices import generate_invoice
 from services.tableServices import delete_table, update_table_number
 from models import Table
-from app import db
+from ../app import db
 
 table_bp = Blueprint('tables', __name__)
 
@@ -33,7 +33,7 @@ def add_table():
 
 # Obtener todas las mesas
 @table_bp.route('/tables', methods=['GET'])
-# @role_required('admin') 
+# @role_required('admin')
 def get_tables_list():
     tables = get_all_tables()
     return jsonify(tables), 200
@@ -44,7 +44,7 @@ def get_tables_list():
 def assign_client_to_table_route(table_id,client_id):
     if not client_id:
         return jsonify({"message": "Client ID is required"}), 400
-    
+
     session = create_session(table_id, client_id)
     if not session:
         return jsonify({"message": "Error creating session"}), 500
@@ -67,7 +67,7 @@ def generate_invoice_route(table_id):
     return jsonify(factura), 201
 
 
-# Eliminar mesa 
+# Eliminar mesa
 @table_bp.route('/tables/<int:table_number>', methods=['DELETE'])
 def delete_table_route(table_number):
     deleted_table = delete_table(table_number)
@@ -82,18 +82,18 @@ def update_table(number_table):
     table = Table.query.filter_by(table_number=number_table).first()
     if not table:
         return jsonify({"error": "Table not found"}), 404
-    
+
     table.position_x = data.get('position_x', table.position_x)
     table.position_y = data.get('position_y', table.position_y)
     db.session.commit()
-    
+
     return jsonify(table.to_dict()), 200
 
 @table_bp.route('/tables/<int:table_id>/update/number', methods=['PATCH'])
 def update_table_number_route(table_id):
     body = request.json
     table_number = body.get('table_number')
-    
+
 
     if not table_number:
         return jsonify({"message": "table_number is required"}), 400

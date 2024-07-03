@@ -2,7 +2,7 @@
 import os
 from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
-from app import db
+from ../app import db
 from models import  User
 import base64
 import json
@@ -11,7 +11,7 @@ import json
 secreteKey = os.environ.get("SECRET_KEY")
 
 
-## USUARIOS 
+## USUARIOS
 
 def create_user(restaurant_name, first_name,last_name, email, password,role):
     if User.query.filter_by(email=email).first():
@@ -30,7 +30,7 @@ def authenticate_user(email, password):
 
 
 
-#Esta funcion 
+#Esta funcion
 def role_required(role):
     def wrapper(fn):
         @jwt_required()

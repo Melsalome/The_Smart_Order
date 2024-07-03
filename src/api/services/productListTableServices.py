@@ -1,7 +1,7 @@
 import os
 from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
-from app import db
+from ../app import db
 from models import ProductTable
 
 import base64
@@ -23,13 +23,13 @@ def get_table_products_list():
                 'id_session': ProductTable.id_session,
                 'products': []
             }
-        
+
         sesiones_dict[ProductTable.id_session]['products'].append(ProductTable.to_dict())
 
     sesiones_list = list(sesiones_dict.values())
     return sesiones_list
-    
-    
+
+
 # Función para obtener los products de una mesa por ID de mesa
 def get_productTable_byId(id_session):
     productTableList = ProductTable.query.filter_by(id_sesion=id_session).all()

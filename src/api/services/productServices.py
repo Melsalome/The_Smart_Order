@@ -1,6 +1,6 @@
 from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
-from app import db
+from ../app import db
 from models import  Product, ProductTable, TableSession
 
 
@@ -31,7 +31,7 @@ def update_product(product_id, name, price, description, image, category):
     db.session.commit()
     return product.to_dict()
 
-# Obtener producto por id 
+# Obtener producto por id
 def get_product_by_id(product_id):
     product = Product.query.get(product_id)
     if not product:
@@ -44,7 +44,7 @@ def delete_product(product_id):
     product = Product.query.get(product_id)
     if not product:
         return None
-    
+
     db.session.delete(product)
     db.session.commit()
     return product.to_dict()

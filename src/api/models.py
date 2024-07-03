@@ -1,4 +1,4 @@
-from app import db
+from ../app import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -73,7 +73,7 @@ class TableSession(db.Model):
     table_number =db.Column(db.Integer, nullable=False)
     products = db.relationship('ProductTable', backref='session', lazy=True)
     status = db.Column(db.String(50), nullable=False, default='active')
-    
+
     def to_dict(self):
         return {
             'id_session': self.id,
@@ -83,8 +83,8 @@ class TableSession(db.Model):
             'status': self.status,
             'products': [product.to_dict() for product in self.products]
         }
-        
-        
+
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
@@ -101,8 +101,8 @@ class Product(db.Model):
             'image': self.image,
             'category' : self.category
         }
-        
-        
+
+
 class ProductTable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_session = db.Column(db.Integer, db.ForeignKey('table_session.id'), nullable=False)
@@ -119,8 +119,8 @@ class ProductTable(db.Model):
             'quantity': self.quantity,
             'status': self.status
         }
-        
-        
+
+
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False, default='Client')
@@ -129,7 +129,7 @@ class Client(db.Model):
             'id': self.id,
             'name': self.name
         }
-        
+
 
 class Menu(db.Model):
     __tablename__ = 'menu'
@@ -166,7 +166,7 @@ class Order(db.Model):
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
     invoice = db.relationship('Invoice', back_populates='order', uselist=False)
     status = db.Column(db.String(50), nullable=False, default='pending')
-    
+
     def __repr__(self):
         return f'<Order {self.id}>'
 
@@ -203,8 +203,8 @@ class OrderItem(db.Model):
             "name": self.name,
             "quantity": self.quantity,
             "price": self.price,
-          
-        }       
+
+        }
 
 class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -214,15 +214,15 @@ class Invoice(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     order = db.relationship('Order', back_populates='invoice')
     def to_dict(self):
-      
+
         return {
             'id': self.id,
             'table_number': self.table_number,
             'restaurant_id': self.restaurant.id,
             'total_price': self.total_price,
         }
-        
-        
+
+
 class InvoiceDetail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_invoice = db.Column(db.Integer, db.ForeignKey('invoice.id'), nullable=False)
@@ -241,4 +241,3 @@ class InvoiceDetail(db.Model):
             'unit_price': self.unit_price,
             'subtotal': self.subtotal
         }
-          
