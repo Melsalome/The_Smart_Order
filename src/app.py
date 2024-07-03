@@ -8,14 +8,18 @@ from flask import Flask, request, jsonify, url_for, send_from_directory, send_fi
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.modelUser import db
 
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-from api.blueprint.login import login_bp
-from api.blueprint.signup import signup_bp
-from api.blueprint.restaurants import restaurants_bp
+from blueprints.table import table_bp
+from blueprints.product import product_bp
+from blueprints.client import client_bp
+from blueprints.productTable import productTable_bp
+from blueprints.sessions import sessions_bp
+from blueprints.auth import auth_bp
+from blueprints.restaurants import restaurants_bp
+from blueprints.generateqr import generateqr_bp
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
@@ -34,6 +38,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+db = SQLAlchemy(app)
 CORS(app)
 
 app.config["JWT_SECRET_KEY"] = "super-secret"  # ¡Cambia las palabras "super-secret" por otra cosa!
@@ -59,10 +64,14 @@ setup_admin(app)
 setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
-app.register_blueprint(api, url_prefix='/app')
-app.register_blueprint(login_bp, url_prefix='/app')
-app.register_blueprint(signup_bp, url_prefix='/app')
+app.register_blueprint(table_bp, url_prefix='/app')
+app.register_blueprint(product_bp, url_prefix='/app')
+app.register_blueprint(client_bp, url_prefix='/app')
+app.register_blueprint(productTable_bp, url_prefix='/app')
+app.register_blueprint(sessions_bp, url_prefix='/app')
+app.register_blueprint(auth_bp, url_prefix='/app')
 app.register_blueprint(restaurants_bp, url_prefix='/app')
+app.register_blueprint(generateqr_bp, url_prefix='/app')
 # Handle/serialize errors like a JSON object
 
 
@@ -113,7 +122,7 @@ def serve_any_other_file(path):
 #     buffer = io.BytesIO()
 #     img.save(buffer, 'PNG')
 #     buffer.seek(0)
-    
+
 #     return send_file(buffer, mimetype='image/png', as_attachment=True, download_name=f"qr_restaurant_{restaurant_id}_table_{table_id}.png")
 def generate_qr_code(restaurant_id, table_id):
     url = f"${process.env.BACKEND_URL}/app/restaurants/{restaurant_id}/tables/{table_id}/menu"
@@ -132,7 +141,7 @@ def generate_qr_code(restaurant_id, table_id):
 
 @app.route('/api/restaurants/<int:restaurant_id>/tables/<int:table_id>/generate_qr', methods=['GET'])
 def generate_qr(restaurant_id, table_id):
-  # cambiar url   
+  # cambiar url
     url = f"https://humble-pancake-977xqppgr6q427j55-3000.app.github.dev/app/restaurants/{restaurant_id}/tables/{table_id}/menu"
     qr = qrcode.QRCode(
         version=1,
@@ -147,7 +156,7 @@ def generate_qr(restaurant_id, table_id):
     buffer = io.BytesIO()
     img.save(buffer, 'PNG')
     buffer.seek(0)
-    
+
     return send_file(buffer, mimetype='image/png', as_attachment=True, download_name=f"qr_restaurant_{restaurant_id}_table_{table_id}.png")
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))

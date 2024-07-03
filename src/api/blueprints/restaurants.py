@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, jwt_required, create_access_token
-from datetime import datetime
-
-from api.modelUser import User, db, Restaurant, Table, Menu, Order, OrderItem, Invoice
+from datetime import datetime, timezone
+from models import User, db, Restaurant, Table, Menu, Order, OrderItem, Invoice
+from services.orderServices import get_active_order_list
 
 restaurants_bp = Blueprint('restaurants', __name__)
 
@@ -30,7 +30,7 @@ def add_restaurant():
 @restaurants_bp.route('/restaurants/<int:restaurant_id>/tables', methods=['POST'])
 def add_table(restaurant_id):
     data = request.get_json()
-    new_table = Table(restaurant_id=restaurant_id, number=data['number'])
+    new_table = Table(restaurant_id=restaurant_id, number=data['table_number'])
     db.session.add(new_table)
     db.session.commit()
     return jsonify(new_table.serialize()), 201
@@ -47,7 +47,7 @@ def update_table(restaurant_id, table_id):
     data = request.get_json()
     table = Table.query.filter_by(id=table_id, restaurant_id=restaurant_id).first()
     if table:
-        table.number = data['number']
+        table.number = data['table_number']
         db.session.commit()
         return jsonify(table.serialize()), 200
     return jsonify({"error": "Table not found"}), 404
@@ -132,11 +132,11 @@ def delete_menu_item(restaurant_id, table_id, item_id):
 @restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_id>/orders', methods=['POST'])
 def create_order(restaurant_id, table_id):
     data = request.json
-    restaurant_id = data['restaurant_id']
-    table_id = data['table_id']
     comment = data.get('comment', '')
     payment_method = data['payment_method']
+    status = data.get('pending')
     items = data['items']
+  
 
     total_price = sum(item['price'] * item['quantity'] for item in items)
 
@@ -146,7 +146,9 @@ def create_order(restaurant_id, table_id):
         comment=comment,
         payment_method=payment_method,
         total_price=total_price,
-        created_at=datetime.utcnow() 
+        created_at=datetime.now(timezone.utc),
+        status=status
+        
     )
     db.session.add(order)
     db.session.commit()
@@ -169,21 +171,40 @@ def create_order(restaurant_id, table_id):
 
     return jsonify(order.serialize()), 201
 
-
-@restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_id>/orders/<int:order_id>', methods=['GET'])
-def get_order(restaurant_id, table_id, order_id):
-    order = Order.query.filter_by(id=order_id, restaurant_id=restaurant_id, table_id=table_id).first()
+@restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_number>/orders/<int:order_id>', methods=['GET'])
+def get_order(restaurant_id, table_number, order_id):
+    order = Order.query.filter_by(id=order_id, restaurant_id=restaurant_id, table_number=table_number).first()
     if order is None:
         return jsonify({"error": "Order not found"}), 404
 
     order_items = OrderItem.query.filter_by(order_id=order_id).all()
-    # items = [item.serialize() for item in order_items]
+    items = [item.serialize() for item in order_items]
 
     response = order.serialize()
-    # response['items'] = items
+    response['items'] = items
 
     return jsonify(response), 200
 
+@restaurants_bp.route('/<int:restaurant_id>/pending/orders/<int:order_id>', methods=['PATCH'])
+def update_order_status_route(restaurant_id, order_id):
+   
+    
+    if not order_id:
+        return jsonify({"message": "order_id is required"}), 400
+    
+    try:
+        order = Order.query.filter_by(id=order_id, restaurant_id=restaurant_id, status='pending').first()
+        
+        if not order:
+            return jsonify({"message": "Order not found or not in pending status"}), 404
+
+        order.status = 'done'
+        db.session.commit()
+
+        return jsonify(order.serialize()), 200
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500
+    
 @restaurants_bp.route('/restaurants/<int:restaurant_id>/orders', methods=['GET'])
 def get_all_order(restaurant_id):
     orders = Order.query.filter_by(restaurant_id=restaurant_id).all()
@@ -237,6 +258,18 @@ def delete_order(restaurant_id, table_id, order_id):
 
     return '', 204
 
+@restaurants_bp.route('/restaurants/<int:restaurant_id>/orders/pending', methods=['GET'])
+def get_order_pending_route(restaurant_id):
+    try:
+        pending_orders = Order.query.filter_by(restaurant_id=restaurant_id, status='pending').all()
+        return jsonify([order.serialize() for order in pending_orders]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+
 @restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_id>/invoices', methods=['POST'])
 def create_invoices(restaurant_id, table_id):
     data = request.json
@@ -256,9 +289,8 @@ def create_invoices(restaurant_id, table_id):
     new_invoice = Invoice(
         order_id=order_id,
         restaurant_id=order.restaurant_id,
-        table_id=order.table_id,
+        table_number=order.table_id,
         total_price=total_price,
-        payment_method=order.payment_method,
        
     )
     db.session.add(new_invoice)
@@ -279,7 +311,7 @@ def create_invoices(restaurant_id, table_id):
 
     return jsonify(response_data), 201
 
-@restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_id>/invoices/<int:invoice_id>', methods=['GET'])
+@restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_number>/invoices/<int:invoice_id>', methods=['GET'])
 def get_invoice(restaurant_id, table_id, invoice_id):
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
@@ -291,7 +323,7 @@ def get_invoice(restaurant_id, table_id, invoice_id):
     response_data = {
         'invoice_id': invoice.id,
         'restaurant_id': invoice.restaurant_id,
-        'table_id': invoice.table_id,
+        'table_number': invoice.table_number,
      
         'total_price': invoice.total_price,
         'order_items': serialized_order_items
@@ -322,3 +354,4 @@ def get_all_invoice(restaurant_id,table_id):
         serialized_invoices.append(serialized_invoice)
 
     return jsonify(serialized_invoices), 200
+
