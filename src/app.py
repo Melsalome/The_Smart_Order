@@ -89,7 +89,7 @@ def sitemap():
     return send_from_directory(static_file_dir, 'index.html')
 
 @app.route('/admin-dashboard')
-def sitemap():
+def admin_dashboard():
     return generate_sitemap(app)
 # any other endpoint will try to serve it like a static file
 
