@@ -17,7 +17,7 @@ import Signup from "./pages/signup";
 import Dashboard from "./pages/dashboard";
 import Caja from "./pages/caja";
 import AdminMenuView from './pages/adminMenuView';
-import { Sidebar } from "./component/sidebar";
+import { Sidebar } from "./component/Sidebar";
 
 
 
@@ -50,16 +50,16 @@ const SidebarController = () => {
       "/app/generate-qr",
       "/app/restaurants/:restaurantId/orders"
     ];
-  
+
     const showSidebar = pathsToShowSidebar.some((path) =>
       matchPath(path, location.pathname)
     );
-  
-    
+
+
     if (decodedToken && decodedToken.roles === "admin" && showSidebar) {
       return <Sidebar />;
     }
-  
+
     return null;
   };
 
@@ -74,7 +74,7 @@ const Layout = () => {
     <BrowserRouter basename={basename}>
       <ScrollToTop>
         <Routes>
-        
+
           <Route element={<Login />} path="/app/login" />
           <Route element={<Signup />} path="/app/signup" />
           <Route path="/" element={<Navigate to="/app/caja" />} />
