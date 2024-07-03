@@ -1,11 +1,11 @@
 """
     Blueprints que definen las rutas de API para las mesas
-    
+
     Definen las rutas de API para gestionar mesas y productos.
     Utilizan las funciones de servicios para interactuar con la base de datos y procesar la lógica de negocio.
 """
 from flask import Blueprint, request, jsonify
-from services.userServices import generate_invoice
+from api.services.userServices import generate_invoice
 
 factura_bp = Blueprint('factura', __name__)
 

@@ -1,7 +1,7 @@
 
 from flask import Blueprint, request, jsonify
-from services.clientServices import create_client, get_client_list
-from services.productServices import update_product, delete_product
+from api.services.clientServices import create_client, get_client_list
+from api.services.productServices import update_product, delete_product
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 client_bp = Blueprint('client', __name__)
@@ -9,7 +9,7 @@ client_bp = Blueprint('client', __name__)
 
 @client_bp.route('/client/create', methods=['POST'])
 def add_client():
-    body = request.json    
+    body = request.json
     client_name = body.get('name')
     if not client_name:
         new_client = create_client("anonimo")
