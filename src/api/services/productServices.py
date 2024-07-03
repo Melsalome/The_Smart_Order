@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
 from api.models import db
-from models import  Product, ProductTable, TableSession
+from api.models import  Product, ProductTable, TableSession
 
 
 ##Servicios de producto

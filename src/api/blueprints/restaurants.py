@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, jwt_required, create_access_token
 from datetime import datetime, timezone
-from models import User, db, Restaurant, Table, Menu, Order, OrderItem, Invoice
+from api.models import User, db, Restaurant, Table, Menu, Order, OrderItem, Invoice
 from services.orderServices import get_active_order_list
 
 restaurants_bp = Blueprint('restaurants', __name__)
@@ -18,7 +18,7 @@ def get_restaurant(restaurant_id):
         return jsonify(restaurant.serialize()), 200
     else:
         return jsonify({'error': 'Restaurant not found'}), 404
-    
+
 @restaurants_bp.route('/restaurants', methods=['POST'])
 def add_restaurant():
     data = request.json
@@ -136,7 +136,7 @@ def create_order(restaurant_id, table_id):
     payment_method = data['payment_method']
     status = data.get('pending')
     items = data['items']
-  
+
 
     total_price = sum(item['price'] * item['quantity'] for item in items)
 
@@ -148,7 +148,7 @@ def create_order(restaurant_id, table_id):
         total_price=total_price,
         created_at=datetime.now(timezone.utc),
         status=status
-        
+
     )
     db.session.add(order)
     db.session.commit()
@@ -187,14 +187,14 @@ def get_order(restaurant_id, table_number, order_id):
 
 @restaurants_bp.route('/<int:restaurant_id>/pending/orders/<int:order_id>', methods=['PATCH'])
 def update_order_status_route(restaurant_id, order_id):
-   
-    
+
+
     if not order_id:
         return jsonify({"message": "order_id is required"}), 400
-    
+
     try:
         order = Order.query.filter_by(id=order_id, restaurant_id=restaurant_id, status='pending').first()
-        
+
         if not order:
             return jsonify({"message": "Order not found or not in pending status"}), 404
 
@@ -204,7 +204,7 @@ def update_order_status_route(restaurant_id, order_id):
         return jsonify(order.serialize()), 200
     except Exception as error:
         return jsonify({"error": str(error)}), 500
-    
+
 @restaurants_bp.route('/restaurants/<int:restaurant_id>/orders', methods=['GET'])
 def get_all_order(restaurant_id):
     orders = Order.query.filter_by(restaurant_id=restaurant_id).all()
@@ -219,12 +219,12 @@ def update_order(restaurant_id, table_id, order_id):
 
     order.comment = data.get('comment', order.comment)
     order.payment_method = data['payment_method']
-    
+
     total_price = 0
     new_items = data['items']
-    
+
     OrderItem.query.filter_by(order_id=order_id).delete()
-    
+
     for item in new_items:
         menu_id = item['menu_id']
         name = item['name']
@@ -252,7 +252,7 @@ def delete_order(restaurant_id, table_id, order_id):
         return jsonify({"error": "Order not found"}), 404
 
     OrderItem.query.filter_by(order_id=order_id).delete()
-    
+
     db.session.delete(order)
     db.session.commit()
 
@@ -275,15 +275,15 @@ def create_invoices(restaurant_id, table_id):
     data = request.json
     order_id = data.get('order_id')
     if not order_id:
-        return jsonify({'error': 'Order ID is required'}), 400 
+        return jsonify({'error': 'Order ID is required'}), 400
     order = Order.query.get(order_id)
     if not order:
         return jsonify({'error': 'Order not found'}), 404
- 
+
     existing_invoice = Invoice.query.filter_by(order_id=order_id).first()
     if existing_invoice:
         return jsonify({'error': 'Invoice already exists for this order'}), 400
-      
+
     total_price = order.total_price
 
     new_invoice = Invoice(
@@ -291,7 +291,7 @@ def create_invoices(restaurant_id, table_id):
         restaurant_id=order.restaurant_id,
         table_number=order.table_id,
         total_price=total_price,
-       
+
     )
     db.session.add(new_invoice)
     db.session.commit()
@@ -303,7 +303,7 @@ def create_invoices(restaurant_id, table_id):
             'invoice_id': new_invoice.id,
             'restaurant_id': order.restaurant_id,
             'table_id': order.table_id,
-        
+
             'total_price': total_price,
             'payment_method': order.payment_method,
             'order_items': serialized_order_items
@@ -324,7 +324,7 @@ def get_invoice(restaurant_id, table_id, invoice_id):
         'invoice_id': invoice.id,
         'restaurant_id': invoice.restaurant_id,
         'table_number': invoice.table_number,
-     
+
         'total_price': invoice.total_price,
         'order_items': serialized_order_items
     }
@@ -334,10 +334,10 @@ def get_invoice(restaurant_id, table_id, invoice_id):
 @restaurants_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_id>/invoices', methods=['GET'])
 def get_all_invoice(restaurant_id,table_id):
     invoices = Invoice.query.filter_by(restaurant_id=restaurant_id, table_id=table_id).all()
-    
+
     if not invoices:
         return jsonify({'error': 'No invoices found for this restaurant and table'}), 404
-    
+
     serialized_invoices = []
     for invoice in invoices:
         order_items = OrderItem.query.filter_by(order_id=invoice.order_id).all()
@@ -347,7 +347,7 @@ def get_all_invoice(restaurant_id,table_id):
             'invoice_id': invoice.id,
             'restaurant_id': invoice.restaurant_id,
             'table_id': invoice.table_id,
-       
+
             'total_price': invoice.total_price,
             'order_items': serialized_order_items
         }

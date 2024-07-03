@@ -33,7 +33,7 @@ from api.models import db
 
 # Configura la extensión Flask-JWT-Extended
 
-# from models import Person
+# from api.models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(

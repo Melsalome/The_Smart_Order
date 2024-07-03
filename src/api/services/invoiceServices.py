@@ -9,7 +9,7 @@ import os
 from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
 from api.models import db
-from models import  ProductTable, Invoice, InvoiceDetail
+from api.models import  ProductTable, Invoice, InvoiceDetail
 
 
 

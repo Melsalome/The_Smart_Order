@@ -10,7 +10,7 @@ from services.tableServices import create_table, get_all_tables, assign_client_t
 from services.sessionServices import create_session
 from services.invoiceServices import generate_invoice
 from services.tableServices import delete_table, update_table_number
-from models import Table
+from api.models import Table
 from api.models import db
 
 table_bp = Blueprint('tables', __name__)
