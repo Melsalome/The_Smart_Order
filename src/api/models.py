@@ -45,6 +45,7 @@ class Restaurant(db.Model):
         }
 
 class Table(db.Model):
+    __tablename__ = 'table'
     id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
     table_number = db.Column(db.Integer, unique=True, nullable=False)
@@ -69,6 +70,7 @@ class Table(db.Model):
         }
 
 class TableSession(db.Model):
+    __tablename__ = 'table_session'
     id = db.Column(db.Integer, primary_key=True)
     id_table = db.Column(db.Integer, db.ForeignKey('table.id'), nullable=False)
     id_client = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
@@ -124,6 +126,7 @@ class ProductTable(db.Model):
 
 
 class Client(db.Model):
+    __tablename__ = 'client'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False, default='Client')
     def to_dict(self):
@@ -158,6 +161,7 @@ class Menu(db.Model):
         }
 
 class Order(db.Model):
+    __tablename__ = 'order'
     id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(db.Integer, nullable=False)
     table_id = db.Column(db.Integer, nullable=False)
@@ -209,6 +213,7 @@ class OrderItem(db.Model):
         }
 
 class Invoice(db.Model):
+    __tablename__ = 'invoice'
     id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
     table_number = db.Column(db.Integer,  nullable=False)
