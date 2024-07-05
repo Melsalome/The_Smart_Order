@@ -16,7 +16,7 @@ def register():
     role = body.get('role')
     if not email or not password:
         return jsonify({"message": "email and password are required"}), 400
-    if role is None:
+    if not role:
         new_user = create_user(restaurant_name,first_name, last_name,email, password, "admin")
         return jsonify(new_user), 201
     new_user, error = create_user(restaurant_name,first_name, last_name, email, password, role)
