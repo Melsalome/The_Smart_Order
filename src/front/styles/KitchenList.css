@@ -4,8 +4,8 @@
 .kitchen-list {
   min-height:100%;
   min-width: 100%;
-  
-  
+
+
   /* padding-right: 1rem; */
   background: rgb(134, 133, 133);
   width: 100%;
@@ -13,27 +13,27 @@
   max-height: 500%;
   display: flex;
   flex-wrap: wrap;
-  
+
   transition: margin-left 0.3s ease;
   padding-left: 150px;
 }
 
 .order-container {
-  
+
   position: relative;
   background-color: white;
   margin: 10px;
-  width: 280px;
+  width: 275px;
   border-radius: 5px;
   overflow: hidden;
   transition: transform 0.3s;
   transition: height 0.3s ease;
-  height: 200px;
+  height: 232px;
   cursor: pointer;
 }
 .order-container:hover {
-  transform: scale(1.05); 
-  z-index: 1; 
+  transform: scale(1.05);
+  z-index: 1;
 }
 
 .order-container.collapsed {
@@ -41,19 +41,19 @@
 }
 
 .order-container.expanded {
-  height: 442px; 
+  height: 442px;
   overflow-y: auto;
 }
 
 .order-items-list {
   padding-left: 0px;
-  min-height: 250px; 
+  min-height: 250px;
   list-style: none;
   padding: 1rem;
   margin: 0;
 }
 .order-header {
-  background-color: #ed4e14; 
+  background-color: #ed4e14;
   padding: 10px;
   padding-bottom: 0px;
   border-radius: 5px;
@@ -63,6 +63,7 @@
   justify-content: space-between;
 }
 .order-header-below{
+  justify-content: center;
   display: flex;
   margin: auto;
   width: 29%;
@@ -70,7 +71,7 @@
 
 .order-item {
   display: flex;
-  
+
   justify-content: space-between;
   margin-bottom: 5px;
 }
@@ -95,19 +96,19 @@
   display: flex;
   justify-content: center;
   align-items:end;
-  
+
 }
 .done-button {
   /* margin-top: 10px; */
   width: 90%;
 border-radius: 6px;
   /* padding: 10px; */
-  background-color: #ed4e14; 
+  background-color: #ed4e14;
   /* margin-bottom: 12px; */
 }
 .done-button.done {
   background-color: rgb(255, 77, 0);
-  fill: white; 
+  fill: white;
 }
 .order-controls {
   display: flex;

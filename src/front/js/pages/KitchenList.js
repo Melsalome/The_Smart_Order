@@ -8,18 +8,18 @@ export const KitchenList = () => {
   const { restaurantId } = useParams();
   const [completedItems, setCompletedItems] = useState({});
   const [elapsedTimes, setElapsedTimes] = useState({});
-  const [expandedOrders, setExpandedOrders] = useState({});
+  const [expandedOrder, setExpandedOrder] = useState(null);
 
   useEffect(() => {
     if (restaurantId) {
       actions.getPendingOrderList(restaurantId);
     }
   }, [restaurantId]);
+
   useEffect(() => {
     if (store.orders) {
       const initialCompletedItems = {};
       const initialElapsedTimes = {};
-      const initialExpandedOrders = {};
 
       store.orders.forEach((order) => {
         if (!completedItems[order.id]) {
@@ -29,16 +29,14 @@ export const KitchenList = () => {
           });
         }
         if (!elapsedTimes[order.id]) {
-          initialElapsedTimes[order.id] = 0;
-        }
-        if (!expandedOrders[order.id]) {
-          initialExpandedOrders[order.id] = false;
+          const createdTime = new Date(order.created_at).getTime();
+          const currentTime = new Date().getTime();
+          initialElapsedTimes[order.id] = Math.floor((currentTime - createdTime) / 1000);
         }
       });
 
       setCompletedItems((prevCompletedItems) => ({ ...prevCompletedItems, ...initialCompletedItems }));
       setElapsedTimes((prevElapsedTimes) => ({ ...prevElapsedTimes, ...initialElapsedTimes }));
-      setExpandedOrders((prevExpandedOrders) => ({ ...prevExpandedOrders, ...initialExpandedOrders }));
     }
   }, [store.orders]);
 
@@ -56,8 +54,6 @@ export const KitchenList = () => {
     return () => clearInterval(interval);
   }, [store.orders]);
 
-
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (restaurantId) {
@@ -68,11 +64,11 @@ export const KitchenList = () => {
     return () => clearInterval(interval);
   }, [restaurantId, actions]);
 
-
   const formatTime = (timeInSeconds) => {
-    const minutes = Math.floor(timeInSeconds / 60);
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
     const seconds = timeInSeconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const formatDateTime = (timestamp) => {
@@ -117,36 +113,37 @@ export const KitchenList = () => {
       delete updatedElapsedTimes[orderId];
       return updatedElapsedTimes;
     });
+    setExpandedOrder(null);
   };
 
   const toggleExpandOrder = (orderId, isHeaderClick) => {
-    if (expandedOrders !== orderId) {
-      setExpandedOrders(orderId);
-    } else if (isHeaderClick) {
-      setExpandedOrders(null);
+    if (isHeaderClick) {
+      setExpandedOrder((prevOrderId) => (prevOrderId === orderId ? null : orderId));
+    } else {
+      setExpandedOrder(orderId);
     }
   };
 
   return (
-
     <div className="kitchen-list">
       {store.orders.map((order) => {
         const isOrderCompleted = toggleOrderCompleted(order.id);
         const elapsedTime = elapsedTimes[order.id] || 0;
         const isOlderThanOneMinutes = elapsedTime > 300;
 
+        const visibleItems = expandedOrder === order.id ? order.order_items : order.order_items.slice(0, 3);
+
         return (
           <div
             key={order.id}
-            className={`order-container ${isOlderThanOneMinutes ? 'order-old' : ''} ${expandedOrders === order.id ? 'expanded' : ''}`}
+            className={`order-container ${isOlderThanOneMinutes ? 'order-old' : ''} ${expandedOrder === order.id ? 'expanded' : ''}`}
             onClick={() => toggleExpandOrder(order.id, false)}
           >
             <div className='order-header' onClick={(e) => {
-                  e.stopPropagation();
-                  toggleExpandOrder(order.id, true);
-                }}>
-              <div
-                className='order-header-up'>
+              e.stopPropagation();
+              toggleExpandOrder(order.id, true);
+            }}>
+              <div className='order-header-up'>
                 <p>
                   <b>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
@@ -173,13 +170,14 @@ export const KitchenList = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
                     <path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z" />
                   </svg>
-                  {formatTime(elapsedTime)}
+
                 </p>
+                <p>{formatTime(elapsedTime)}</p>
               </div>
             </div>
             <p className='order-date'>{formatDateTime(order.created_at)}</p>
             <ul className="order-items-list">
-              {order.order_items.map((item) => (
+              {visibleItems.map((item) => (
                 <li key={item.id} className={`order-item ${completedItems[order.id]?.[item.id] ? 'completed' : ''}`}>
                   <div className='name-quantity'>
                     <span><b>{item.quantity}</b></span>
@@ -195,21 +193,26 @@ export const KitchenList = () => {
                 </li>
               ))}
             </ul>
-            <div className='order-footer'>
-            <button
-              className={`done-button ${isOrderCompleted ? 'done' : ''}`}
-              onClick={() => handleDoneClick(order.id)}
-              disabled={!isOrderCompleted}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#000000">
-                <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
-              </svg>
-            </button>
-            </div>
+            {expandedOrder === order.id && (
+              <div className='order-footer'>
+                <button
+                  className={`done-button ${isOrderCompleted ? 'done' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDoneClick(order.id);
+                  }}
+                  disabled={!isOrderCompleted}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#000000">
+                    <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
         );
       })}
     </div>
-
   );
 };
+

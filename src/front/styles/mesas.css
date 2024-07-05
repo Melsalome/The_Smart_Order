@@ -95,7 +95,7 @@ section{
     background: rgb(22, 180, 1);
     border-radius: 0 0 17px 17px;
     height: 42%;
-    
+
 }
 .guardar:hover{
     background: rgb(12, 104, 0);
@@ -104,7 +104,7 @@ section{
 
 .mesa-container {
     position: relative;
-    
+
     width: 60px;
     height: 60px;
     display: flex;
@@ -166,7 +166,7 @@ section{
     color: #fff;
     border: none;
     background: transparent;
-    width: 40%;
+    width: 45%;
 }
 
 .nombre-sala{
@@ -181,7 +181,7 @@ section{
 }
 
 .sala-container{
-    
+
     height: 50%;
 }
 
