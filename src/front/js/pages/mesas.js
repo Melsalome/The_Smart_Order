@@ -116,25 +116,24 @@ const Mesas = () => {
 
     const guardarCambios = async () => {
         try {
-            console.log(tempMesas);
             await Promise.all(tempMesas.map(async (mesa) => {
-                // const existingTable = mesas.find(m => m.id === mesa.id);
-                // if (existingTable) {
-                //     if (existingTable.position_x !== mesa.position_x || existingTable.position_y !== mesa.position_y) {
-                //         await actions.updateTablePosition(mesa.table_number, { x: mesa.position_x, y: mesa.position_y });
-                //     }
-                //     if (existingTable.table_number !== mesa.table_number) {
-                //         await actions.updateTableNumber(mesa.id, mesa.table_number);
-                //     }
-                // } else {
+                const existingTable = mesas.find(m => m.id === mesa.id);
+                if (existingTable) {
+                    if (existingTable.position_x !== mesa.position_x || existingTable.position_y !== mesa.position_y) {
+                        await actions.updateTablePosition(mesa.table_number, { x: mesa.position_x, y: mesa.position_y });
+                    }
+                    if (existingTable.table_number !== mesa.table_number) {
+                        await actions.updateTableNumber(mesa.id, mesa.table_number);
+                    }
+                } else {
                     await actions.createNewTable(mesa);
-                // }
+                }
             }));
 
-            // const mesasToDelete = mesas.filter(mesa => !tempMesas.find(tm => tm.id === mesa.id));
-            // await Promise.all(mesasToDelete.map(async (mesa) => {
-            //     await actions.delete_table(mesa.table_number);
-            // }));
+            const mesasToDelete = mesas.filter(mesa => !tempMesas.find(tm => tm.id === mesa.id));
+            await Promise.all(mesasToDelete.map(async (mesa) => {
+                await actions.delete_table(mesa.table_number);
+            }));
 
             setMesas(tempMesas);
 
