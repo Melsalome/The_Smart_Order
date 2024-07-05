@@ -135,8 +135,8 @@ section {
     position: absolute;
     bottom: 19%;
     border-radius: 6px;
-    
-    
+
+
 }
 .total--price-tittle{
     display: flex;
@@ -154,8 +154,8 @@ section {
 
 .ticket_table{
     display: flex;
-    justify-content: center;    
-    
+    justify-content: center;
+
 }
 .container-caja-mesas h1 {
     display: flex;
@@ -287,9 +287,9 @@ section {
 }
 
 .boton-pagar {
-    border-radius: 6px;
+    border-radius: 6px 6px 18px 6px;
     height: 99%;
-    width: 32%;
+    width: 49%;
     border: 0 solid transparent;
     background-color: rgb(0, 187, 9);
     box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
@@ -341,7 +341,7 @@ section {
 .boton-abrir-caja {
     border-radius: 6px 6px 6px 18px;
     height: 99%;
-    width: 32%;
+    width: 48%;
     border: 0 solid transparent;
     background-color: rgb(221, 224, 0);
     box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
@@ -405,7 +405,7 @@ section {
     margin-left: 1px;
     margin-right: 1px;
     display: flex;
-    
+
     flex-direction: column;
 }
 .to-pay{
@@ -460,7 +460,7 @@ section {
     font-weight: bold;
     padding: 5px 20px 0px 20px;
     border-radius: 6px 6px 6px 6px;
-    color: white;  
+    color: white;
 }
 
 .pay-input::-webkit-outer-spin-button,
@@ -484,7 +484,7 @@ section {
 .to-paid h3, .to-paid h2{
     font-weight: bold;
     color: black;
-}   
+}
 .to-paid h2{
     margin-top: 2px;
 }
@@ -497,7 +497,7 @@ section {
     border: none;
     background: transparent;
     min-width: 10%;
-    
+
     max-width: 100%;
     height: 100%;
     margin-bottom: 5px;
@@ -513,7 +513,7 @@ section {
 }
 .dollar-sign {
     /* padding-left: 50px; */
-    
+
     margin-bottom: 6px;
     font-size: 30px;
     color: #000000;

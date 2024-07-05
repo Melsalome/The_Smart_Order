@@ -29,7 +29,7 @@ const ProtectedRoute = ({ children, role }) => {
   const decodedToken = jwtDecode(token);
   // console.log(decodedToken.roles);
   if (role && decodedToken.roles !== role) {
-    return <Navigate to="/app/home" />;
+    return <Navigate to="/app/login" />;
   }
   return children;
 };
@@ -78,13 +78,13 @@ const Layout = () => {
           <Route element={<Login />} path="/app/login" />
           <Route element={<Signup />} path="/app/signup" />
           <Route path="/" element={<Navigate to="/app/caja" />} />
-          <Route element={<ProtectedRoute role={"admin"}><Caja /></ProtectedRoute>} path="/app/caja" />
-          <Route element={<ProtectedRoute role="admin"><Dashboard /></ProtectedRoute>} path="/app/dashboard" />
-          <Route element={<ProtectedRoute role="admin"><Mesas /></ProtectedRoute>} path="/app/mesas" />
-          <Route element={<ProtectedRoute role="admin"><AdminMenuView /></ProtectedRoute>} path="/app/adminmenu" />
+          <Route element={<ProtectedRoute roles={['admin', 'caja']}><Caja /></ProtectedRoute>} path="/app/caja" />
+          <Route element={<ProtectedRoute roles="admin"><Dashboard /></ProtectedRoute>} path="/app/dashboard" />
+          <Route element={<ProtectedRoute roles="admin"><Mesas /></ProtectedRoute>} path="/app/mesas" />
+          <Route element={<ProtectedRoute roles="admin"><AdminMenuView /></ProtectedRoute>} path="/app/adminmenu" />
           <Route element={<AboutUs />} path="/app/about-us" />
-          <Route element={<ProtectedRoute role="admin"><GenerateQR /></ProtectedRoute>} path="/app/generate-qr" />
-          <Route element={<ProtectedRoute roles={['admin', 'cocina']}><KitchenList /></ProtectedRoute>} path="/app/restaurants/:restaurantId/orders" />
+          <Route element={<ProtectedRoute roles="admin"><GenerateQR /></ProtectedRoute>} path="/app/generate-qr" />
+          <Route element={<ProtectedRoute roless={['admin', 'cocina']}><KitchenList /></ProtectedRoute>} path="/app/restaurants/:restaurantId/orders" />
           <Route element={<Menu />} path="/app/generate-qr/app/restaurants/:restaurantId/tables/:tableId/menu" />
           <Route element={<OrderSummary />} path="/restaurants/:restaurantId/tables/:tableId/order-summary" />
           <Route element={<OrderSuccess />} path="/restaurants/:restaurantId/tables/:tableId/order-success" />

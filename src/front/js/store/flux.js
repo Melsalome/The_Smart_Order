@@ -365,8 +365,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 return data;
             },
 
-            updateTablePosition: async (id, position) => {
-                const data = await dispatcherTable.updateTablePosition(id, position)
+            updateTablePosition: async (table_number, position) => {
+                const data = await dispatcherTable.updateTablePosition(table_number, position)
                 return data;
             },
 

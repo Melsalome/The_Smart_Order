@@ -29,13 +29,13 @@ const MenuCategory = ({ category, meals, collapseOthers, isCollapsed }) => {
     setTimeout(() => {
       const scrollPosition = window.scrollY = 250;
       window.scrollTo({
-        top: scrollPosition, 
-        behavior: 'smooth' 
+        top: scrollPosition,
+        behavior: 'smooth'
       });
-    }, 100); 
+    }, 100);
   };
 
-  
+
 
   return (
     <div className="menu-category">
@@ -63,22 +63,22 @@ export const Menu = () => {
   const [client, setClient] = useState({});
 
   const createClient = async () => {
-    if (!localStorage.getItem("clientId")) {
+    if (!sessionStorage.getItem("clientId")) {
       let newClient = await actions.createClient("anonimo");
       setClient(newClient);
-      localStorage.setItem("clientId", newClient.id);
+      sessionStorage.setItem("clientId", newClient.id);
     }
   };
 
   const assingClientToTable = async () => {
-    if (!localStorage.getItem("clientId")) {
+    if (!sessionStorage.getItem("clientId")) {
       console.log("No hay cliente");
       return;
-    } else if (!localStorage.getItem("sessionId")) {
-      let clientId = localStorage.getItem("clientId");
-      const session = await actions.assingClient(tableId, clientId); 
+    } else if (!sessionStorage.getItem("sessionId")) {
+      let clientId = sessionStorage.getItem("clientId");
+      const session = await actions.assingClient(tableId, clientId);
       console.log(session)
-      localStorage.setItem("sessionId", session.id_session);
+      sessionStorage.setItem("sessionId", session.id_session);
     }
   };
   useEffect(() => {

@@ -43,8 +43,8 @@ const dispatcherTable = {
         return data;
     },
 
-    updateTablePosition: async (id, position) => {
-        const response = await fetch(`${process.env.BACKEND_URL}/app/tables/${id}`, {
+    updateTablePosition: async (table_number, position) => {
+        const response = await fetch(`${process.env.BACKEND_URL}/app/tables/${table_number}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
             CORS: 'Access-Control-Allow-Origin',

@@ -51,10 +51,11 @@ export const KitchenList = () => {
         });
         return updatedElapsedTimes;
       });
-    }, 100000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [store.orders]);
+
 
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export const KitchenList = () => {
       if (restaurantId) {
         actions.getPendingOrderList(restaurantId);
       }
-    }, 50000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [restaurantId, actions]);
@@ -141,8 +142,8 @@ export const KitchenList = () => {
             onClick={() => toggleExpandOrder(order.id, false)}
           >
             <div className='order-header' onClick={(e) => {
-                  e.stopPropagation(); 
-                  toggleExpandOrder(order.id, true); 
+                  e.stopPropagation();
+                  toggleExpandOrder(order.id, true);
                 }}>
               <div
                 className='order-header-up'>
@@ -209,6 +210,6 @@ export const KitchenList = () => {
         );
       })}
     </div>
-    
+
   );
 };

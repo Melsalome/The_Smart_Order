@@ -51,7 +51,7 @@ const Signup = () => {
                     if (tokenLocalStoraged) {
                         setTimeout(() => {
                             setIsLoading(false);
-                            navigate("/app/home");
+                            navigate("/app/caja");
                             setToken(tokenLocalStoraged);
                         }, 3000);
                     }
@@ -91,7 +91,7 @@ const Signup = () => {
                         <div className="formulario inputlogin">
                             <form action="#" method="POST">
                                 <h1>Sign up</h1>
-                                {/* <div className="input-container">
+                                <div className="input-container">
                                     <i className="fa-solid fa-utensils"></i>
                                     <select className="restaurant-dropdown" value={selectedRestaurant} onChange={handleSelectChange}>
                                         <option value="" disabled>Selecciona un Restaurante</option>
@@ -101,7 +101,7 @@ const Signup = () => {
                                             </option>
                                         ))}
                                     </select>
-                                </div> */}
+                                </div>
                                 <div className="input-container">
                                     <i className="fa-solid fa-user"></i>
                                     <input type="text" value={firstName} onChange={(event) => { setFirstName(event.target.value); }} required />

@@ -16,8 +16,8 @@ const Mesas = () => {
     const [tempLargoSala, setTempLargoSala] = useState('10');
     const [tempAnchoSala, setTempAnchoSala] = useState('15');
     const {store, actions} = useContext(Context)
-    
-    
+
+
     const girarMesa = (idMesa) => {
         setAngulosRotacion((prevAngulos) => {
             const anguloActual = prevAngulos[idMesa] || 0;
@@ -29,10 +29,10 @@ const Mesas = () => {
         });
     };
 
-    
+
     const agregarMesa = async(icon) => {
         const maxId = mesas.reduce((max, mesa) => Math.max(max, mesa.id), 0);
-       
+
         const nuevaMesa = {
             id: maxId + 1,
             table_number: `${maxId + 1}`,
@@ -43,11 +43,30 @@ const Mesas = () => {
         await actions.createNewTable(nuevaMesa)
         setMesas([...mesas, nuevaMesa]);
     };
- 
+    const manejarSoltar = (e) => {
+        e.preventDefault();
+        const contenedor = e.target.getBoundingClientRect();
+        const id = e.dataTransfer.getData("text/plain");
+        const ajusteX = 26;
+        const ajusteY = 26;
+        const nuevaPosicion = {
+            x: e.clientX - contenedor.left - ajusteX,
+            y: e.clientY - contenedor.top - ajusteY
+        };
+
+        moverMesa(parseInt(id), nuevaPosicion);
+    };
+
+    const actualizarNombreMesa = async(id, nuevoNombre) => {
+       await actions.updateTableNumber(id, nuevoNombre)
+    };
+
     const moverMesa = async (id, nuevaPosicion) => {
+        console.log(mesas)
         const mesa = mesas.find(mesa => mesa.id === id);
+        console.log(mesa.id)
         if (mesa) {
-            const response = await actions.updateTablePosition(id, nuevaPosicion);
+            const response = await actions.updateTablePosition(mesa.table_number, nuevaPosicion);
             if (response) {
                 setMesas(mesas.map(mesa => mesa.id === id ? { ...mesa, position_x: nuevaPosicion.x, position_y: nuevaPosicion.y } : mesa));
             }
@@ -82,23 +101,6 @@ const Mesas = () => {
         setMesas(mesas.filter(mesa => mesa.table_number !== table_number))
     };
 
-    const manejarSoltar = (e) => {
-        e.preventDefault();
-        const contenedor = e.target.getBoundingClientRect();
-        const id = e.dataTransfer.getData("text/plain");
-        const ajusteX = 26;
-        const ajusteY = 26;
-        const nuevaPosicion = {
-            x: e.clientX - contenedor.left - ajusteX,
-            y: e.clientY - contenedor.top - ajusteY
-        };
-        console.log(id)
-        moverMesa(parseInt(id), nuevaPosicion);
-    };
-
-    const actualizarNombreMesa = async(id, nuevoNombre) => {
-       await actions.updateTableNumber(id, nuevoNombre)
-    };
 
     useEffect(() => {
         if (tempLargoSala != null && tempAnchoSala != null) {
@@ -111,12 +113,17 @@ const Mesas = () => {
         actualizarTamañoSala();
     }, [largoSala, anchoSala]);
 
+    useEffect(() => {
+        localStorage.setItem('largoSala', JSON.stringify(largoSala));
+        localStorage.setItem('anchoSala', JSON.stringify(anchoSala));
+        localStorage.setItem('angulosRotacion', JSON.stringify(angulosRotacion));
+    }, [largoSala, anchoSala, angulosRotacion]);
 
     const fetchTables = async () => {
         const tables = await actions.getTableList();
         console.log(tables)
         setMesas(tables);
-        
+
       };
 
     useEffect(() => {
@@ -125,12 +132,11 @@ const Mesas = () => {
     }, []);
 
     const getIcon = (icon) => {
-        
+
         switch(icon) {
             case "/icono-mesa.png":
                 return "/icono-mesa.png";
             case "/barraVertTransp.png":
-                console.log(icon, "este es el console log del icono")
                 return "/barraVertTransp.png";
             case "/barraCantoTransp.png":
                 return "/barraCantoTransp.png";
@@ -140,7 +146,7 @@ const Mesas = () => {
     };
     return (
         <>
-        
+
             <section>
 
                     <h1 className='section-mesas-tittle'>Tables</h1>
@@ -159,7 +165,7 @@ const Mesas = () => {
                             style={{ width: '1080px', height: '600px', position: 'relative', border: '1px solid black', backgroundImage: `url(${suelo})`, backgroundSize: '110px', backgroundPosition: 'center' }}
                             onDragOver={permitirSoltar}
                             onDrop={manejarSoltar}
-                        > 
+                        >
                             {mesas.map((mesa) => (
                                 <div
                                     key={mesa.id}
@@ -238,7 +244,7 @@ const Mesas = () => {
                         </div>
                     </div>
                 </div>
-                
+
             </section>
         </>
     );

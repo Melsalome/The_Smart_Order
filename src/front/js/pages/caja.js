@@ -3,8 +3,6 @@ import "../../styles/caja.css";
 import iconoAtras from "../../img/flecha-hacia-atras.png";
 import iconoLlave from "../../img/llave.png";
 import iconoPagar from "../../img/pagar.png";
-import iconoAnadir from "../../img/anadir.png";
-import iconoEliminar from "../../img/eliminar.png";
 import iconoCard from "../../img/card1.png";
 import iconoMoney from "../../img/money1.png";
 import suelo from "../../img/suelo506.png";
@@ -35,16 +33,33 @@ const Caja = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalInsufficientPaymentVisible, setModalInsufficientPaymentVisible] = useState(false);
 
+
     const recuperarEstado = async () => {
-        const largo = JSON.parse(localStorage.getItem('largoSala')) || '600px';
-        const ancho = JSON.parse(localStorage.getItem('anchoSala')) || '600px';
-        const angulosGuardados = JSON.parse(localStorage.getItem('angulosRotacion')) || {};
-        setLargoSala(largo);
-        setAnchoSala(ancho);
-        setAngulosRotacion(angulosGuardados);
-        const data = await actions.getTableList();
-        setTableList(data);
+        try {
+
+            const largo = JSON.parse(localStorage.getItem('largoSala')) || '600px';
+            const ancho = JSON.parse(localStorage.getItem('anchoSala')) || '600px';
+            const angulosGuardados = JSON.parse(localStorage.getItem('angulosRotacion')) || {};
+            setLargoSala(largo);
+            setAnchoSala(ancho);
+            setAngulosRotacion(angulosGuardados);
+            const data = await actions.getTableList();
+            setTableList(data);
+            console.log('Datos de la base de datos:', data);
+        } catch (error) {
+            console.error('Error al recuperar el estado:', error);
+        }
     };
+    const fetchData = async () => {
+
+        await recuperarEstado();
+        await fetchProductPrices();
+        await handleActiveSessionList();
+        setLoading(false);
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const abrirModal = () => {
         setModalVisible(true);
@@ -64,13 +79,9 @@ const Caja = () => {
         }
         manejarClickAtras();
         abrirModal();
+        handleCloseSession(activeSession.table_number);
     };
 
-    const manejarClickAnadir = () => {
-        setMostrarCarta(true);
-        setMostrarCalculadora(false);
-        resetPaidAmount();
-    };
 
     const manejarClickAtras = () => {
         setMostrarCarta(false);
@@ -239,16 +250,6 @@ const Caja = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await recuperarEstado();
-            await fetchProductPrices();
-            await handleActiveSessionList();
-            setLoading(false);
-        };
-
-        fetchData();
-    }, []);
 
     useEffect(() => {
         const aplicarMedidas = () => {
@@ -274,7 +275,7 @@ const Caja = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             handleActiveSessionList()
-        }, 1000);
+        }, 10000);
         // OJO, ACTUALIZAR TIEMPO DE SESIONES
         return () => clearInterval(interval);
     }, [tableList]);
@@ -318,8 +319,8 @@ const Caja = () => {
     }, [modalInsufficientPaymentVisible]);
 
     const updateMesaStatus = (table_number, status) => {
-        setMesas(prevMesas => 
-            prevMesas.map(mesa => 
+        setMesas(prevMesas =>
+            prevMesas.map(mesa =>
                 mesa.table_number === table_number ? { ...mesa, status: status } : mesa
             )
         );
@@ -338,10 +339,8 @@ const Caja = () => {
                         <div className="ticket_table">
                             <div className="ticket-view">
                                 <h5> Table number: <strong> {activeSession.table_number}</strong></h5>
-                                {/* {isSessionClosed || activeSession.products.length === 0 ? (
-                                    <div className="empty-table-message">▶ Empty table ◀</div> */}
-                                    {activeSession.products.length === 0 && !isSessionClosed ? (
-                <div className="empty-table-message">▶ Empty table ◀</div>
+                                {activeSession.products.length === 0 && !isSessionClosed ? (
+                                    <div className="empty-table-message">▶ Empty table ◀</div>
 
                                 ) : (
                                     activeSession.products.map((product, index) => (
@@ -362,8 +361,6 @@ const Caja = () => {
                     <div className="botones">
                         <button onClick={abrirCaja} className="boton-abrir-caja">Open Cash<img src={iconoLlave} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
                         <button className="boton-pagar" onClick={manejarClickPagar}>Pay <br /><img src={iconoPagar} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
-                        <button className="boton-anadir" onClick={manejarClickAnadir}>Add <img src={iconoAnadir} alt="Atrás" style={{ width: '25px', height: '25px' }} /></button>
-                        <button className="boton-eliminar">Delete <img src={iconoEliminar} alt="Atrás" style={{ width: '25px', height: '25px' }} /></button>
                     </div>
                 </div>
 
@@ -384,7 +381,7 @@ const Caja = () => {
                                 }}
                                 updateMesaStatus={updateMesaStatus}
                                 angulo={angulosRotacion[mesa.id]}
-                                
+
                             />
                         ))}
                     </div>
@@ -419,7 +416,7 @@ const Caja = () => {
                                 </div>
                                 <div className="botones-pagar">
                                     <button className="boton-cash" onClick={manejarClickCash}>Cash <br /><img src={iconoMoney} alt="Cash" style={{ width: '50px', height: '50px' }} /></button>
-                                    <button className="boton-card" onClick={manejarClickCash}>Credit Card <br /><img src={iconoCard} alt="Credit Card" style={{ width: '50px', height: '50px' }} /></button>
+                                    <button className="boton-card" onClick={manejarClickAtrasConModal}>Credit Card <br /><img src={iconoCard} alt="Credit Card" style={{ width: '50px', height: '50px' }} /></button>
                                 </div>
                             </div>
                         </div>

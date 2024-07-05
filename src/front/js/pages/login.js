@@ -13,7 +13,7 @@ const Login = () => {
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
-		
+
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 		if (!email || !password) {
@@ -33,17 +33,14 @@ const Login = () => {
 				localStorage.setItem("token", token);
 
 				switch(decodedToken.roles) {
-					case "admin": 
+					case "admin":
 						navigate("/app/caja");
 						break;
-					case "cocina": 
+					case "cocina":
 						navigate("/app/restaurants/1/orders");
 						break;
-					case "Restaurante": 
+					case "caja":
 						navigate("/app/caja");
-						break;
-					case "mesa1": 
-						navigate("/app/restaurants/1/tables/1/menu");
 						break;
 					default:
 						throw new Error("Rol no reconocido");
@@ -51,7 +48,7 @@ const Login = () => {
 			} catch (error) {
 				alert("Usuario o contraseña incorrectos.");
 				console.error("Login error:", error);
-			}   
+			}
 		}
 	};
 
@@ -87,7 +84,7 @@ const Login = () => {
 						<button className="r6" onClick={handleLogin}>Access</button>
 					</form>
 					<div>
-						
+
 						<div className="registrar">
 							<p>Not have an account ?</p>
 							<button onClick={handleSectionCreateAccount}>Create an account</button>
