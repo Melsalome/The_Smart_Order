@@ -25,7 +25,7 @@ def add_table():
     position_x = body.get('position_x')
     position_y = body.get('position_y')
     icon = body.get('icon')
-    if not table_number:
+    if table_number is None:
         return jsonify({"message": "table_number is required"}), 400
 
     new_table = create_table(table_number, position_x, position_y, icon)
