@@ -9,7 +9,7 @@ import io
 import qrcode
 from flask import Flask, request, jsonify, url_for, Blueprint, send_file
 from api.models import db
-from api.models import AdminUser, Table, Restaurant, Menu, Order, OrderItem
+from api.models import User, Table, Restaurant, Menu, Order, OrderItem
 from api.utils import generate_sitemap, APIException
 
 

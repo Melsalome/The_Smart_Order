@@ -3,7 +3,7 @@ import os
 from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
 from api.models import db
-from api.models import  AdminUser
+from api.models import  User
 import base64
 import json
 
@@ -14,16 +14,16 @@ secreteKey = os.environ.get("SECRET_KEY")
 ## USUARIOS
 
 def create_user(restaurant_name, first_name,last_name, email, password,role):
-    if AdminUser.query.filter_by(email=email).first():
+    if User.query.filter_by(email=email).first():
         return None, "User already exists"
-    new_user = AdminUser(restaurant_name = restaurant_name, first_name=first_name, last_name=last_name,email=email,role=role)
+    new_user = User(restaurant_name = restaurant_name, first_name=first_name, last_name=last_name,email=email,role=role)
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
     return new_user.to_dict(), None
 
 def authenticate_user(email, password):
-    user = AdminUser.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
         return user.to_dict(), None
     return None, "Invalid email or password"
@@ -43,6 +43,6 @@ def role_required(role):
     return wrapper
 
 def get_all_users():
-    return [user.to_dict() for user in AdminUser.query.all()]
+    return [user.to_dict() for user in User.query.all()]
 
 # desencriptar data
