@@ -9,7 +9,7 @@ from api.models import Table, ProductTable, TableSession
 
 def create_table(table_number, position_x, position_y, icon):
     existing_table = Table.query.filter_by(table_number=table_number).first()
-    if existing_table:
+    if existing_table is not None:
         return None, "Table already exists"
 
     new_table = Table(position_x = position_x, position_y = position_y,table_number=table_number, icon=icon, restaurant_id = 1, )
