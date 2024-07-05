@@ -94,7 +94,7 @@ const Signup = () => {
                                 <div className="input-container">
                                     <i className="fa-solid fa-utensils"></i>
                                     <select className="restaurant-dropdown" value={selectedRestaurant} onChange={handleSelectChange}>
-                                        <option value="" disabled>Selecciona un Restaurante</option>
+                                        <option value="">Selecciona un Restaurante</option>
                                         {restaurantName.map((name, index) => (
                                             <option key={index} value={name} onChange={handleSelectChange}>
                                                 {name}
