@@ -56,6 +56,7 @@ class Table(db.Model):
     position_y= db.Column(db.Integer, nullable=False, default=0)
     icon = db.Column(db.String(250), nullable=False)
     restaurant = db.relationship('Restaurant', backref=db.backref('tables', lazy=True))
+    
     def to_dict(self):
         return {
             'id': self.id,
@@ -90,12 +91,14 @@ class TableSession(db.Model):
 
 
 class Product(db.Model):
+    __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=True)
     image = db.Column(db.String(500), nullable=True)
     category = db.Column(db.String(255))
+    
     def to_dict(self):
         return {
             'id': self.id,
@@ -108,11 +111,13 @@ class Product(db.Model):
 
 
 class ProductTable(db.Model):
+    __tablename__ = 'product_table'
     id = db.Column(db.Integer, primary_key=True)
     id_session = db.Column(db.Integer, db.ForeignKey('table_session.id'), nullable=False)
     id_product = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
     status = db.Column(db.String(50), nullable=False, default='pending')
+    
     def to_dict(self):
         product = Product.query.get(self.id_product)
         return {
@@ -190,6 +195,7 @@ class Order(db.Model):
         }
 
 class OrderItem(db.Model):
+    __tablename__ = 'order_item'
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
     menu_id = db.Column(db.Integer, nullable=False)
@@ -220,8 +226,8 @@ class Invoice(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     order = db.relationship('Order', back_populates='invoice')
-    def to_dict(self):
 
+    def to_dict(self):
         return {
             'id': self.id,
             'table_number': self.table_number,
@@ -231,12 +237,14 @@ class Invoice(db.Model):
 
 
 class InvoiceDetail(db.Model):
+    __tablename__ = 'invoice_detail'
     id = db.Column(db.Integer, primary_key=True)
     id_invoice = db.Column(db.Integer, db.ForeignKey('invoice.id'), nullable=False)
     id_product = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     unit_price = db.Column(db.Float, nullable=False)
     subtotal = db.Column(db.Float, nullable=False)
+    
     def to_dict(self):
         product = Product.query.get(self.id_product)
         return {
