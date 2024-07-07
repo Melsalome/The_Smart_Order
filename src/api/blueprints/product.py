@@ -5,7 +5,7 @@
 """
 from flask import Blueprint, request, jsonify
 from api.services.productServices import create_product, get_all_products, update_product, delete_product, get_product_by_id
-product_bp = Blueprint('product', __name__)
+product_bp = Blueprint('products', __name__)
 
 # Crear un nuevo producto
 @product_bp.route('/products/createproduct', methods=['POST'])
