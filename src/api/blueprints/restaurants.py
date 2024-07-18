@@ -1,9 +1,14 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, jwt_required, create_access_token
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from api.models import User, db, Restaurant, Table, Menu, Order, OrderItem, Invoice
 from api.services.orderServices import get_active_order_list
+import zoneinfo
 
+tz = zoneinfo.ZoneInfo("Europe/Madrid")
+current_time = datetime.now(tz)
+print(current_time)
 restaurants_bp = Blueprint('restaurants', __name__)
 
 @restaurants_bp.route('/restaurants', methods=['GET'])
@@ -146,7 +151,7 @@ def create_order(restaurant_id, table_id):
         comment=comment,
         payment_method=payment_method,
         total_price=total_price,
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(ZoneInfo('Europe/Madrid')),
         status=status
 
     )

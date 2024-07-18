@@ -22,7 +22,7 @@ flask-jwt-extended ="*"
 qrcode = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.12.4"
 
 [scripts]
 start="flask run -p 3001 -h 0.0.0.0"

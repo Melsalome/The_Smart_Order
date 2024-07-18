@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from zoneinfo import ZoneInfo
 
 db = SQLAlchemy()
 
@@ -173,10 +174,12 @@ class Order(db.Model):
     comment = db.Column(db.String(255), nullable=True)
     payment_method = db.Column(db.String(50), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(ZoneInfo('Europe/Madrid')))
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
     invoice = db.relationship('Invoice', back_populates='order', uselist=False)
     status = db.Column(db.String(50), nullable=False, default='pending')
+
+
 
     def __repr__(self):
         return f'<Order {self.id}>'
