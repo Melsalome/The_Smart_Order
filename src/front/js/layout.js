@@ -18,6 +18,7 @@ import Dashboard from "./pages/dashboard";
 import Caja from "./pages/caja";
 import AdminMenuView from './pages/adminMenuView';
 import { Sidebar } from "./component/Sidebar";
+import { SuccessPage } from "./pages/SuccessPage";
 
 
 
@@ -88,6 +89,7 @@ const Layout = () => {
           <Route element={<Menu />} path="/app/generate-qr/app/restaurants/:restaurantId/tables/:tableId/menu" />
           <Route element={<OrderSummary />} path="/restaurants/:restaurantId/tables/:tableId/order-summary" />
           <Route element={<OrderSuccess />} path="/restaurants/:restaurantId/tables/:tableId/order-success" />
+          <Route element={<SuccessPage />} path="/order-success" />
           <Route element={<h1>Not found!</h1>} />
         </Routes>
         <SidebarController />

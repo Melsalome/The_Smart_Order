@@ -4,6 +4,9 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import io
 import qrcode
 import os
+import stripe
+from dotenv import load_dotenv
+import json
 from flask import Flask, request, jsonify, url_for, send_from_directory, send_file
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -29,10 +32,12 @@ from api.models import db
 
 
 # Allow CORS requests to this API
-
+stripe.api_key = 'sk_test_51PaxPIEdozExyOoProFDb9OTycMh7nC44AE5c4WUsM03ThePQ66PnNmlA9aMDbVkAXsf4wKA9gww7xSNL4c3mqFl00VuhjvXqw'
 
 # Configura la extensión Flask-JWT-Extended
-
+load_dotenv()
+frontend_url = os.getenv('FRONTEND_URL')
+print(f"Frontend URL: {frontend_url}")
 # from api.models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -161,6 +166,38 @@ def generate_qr(restaurant_id, table_id):
     buffer.seek(0)
 
     return send_file(buffer, mimetype='image/png', as_attachment=True, download_name=f"qr_restaurant_{restaurant_id}_table_{table_id}.png")
+
+@app.route('/stripe/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    data = request.json
+    cart = data.get('cart', [])
+    # restaurant_id = data.get('restaurantId')
+    # table_id = data.get('tableId')
+
+    line_items = [{
+        'price_data': {
+            'currency': 'usd',
+            'product_data': {
+                'name': item['name'],
+            },
+            'unit_amount': int(item['price'] * 100),  # Convert dollars to cents
+        },
+        'quantity': item['quantity'],
+    } for item in cart]
+    success_url=f"${frontend_url}/order-success"
+    print(f"Success URL: {success_url}")
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=f"https://orange-space-zebra-v665gxxj96qrh6g96-3000.app.github.dev/order-success", 
+        )
+        return jsonify({'url': session.url})
+    except Exception as e:
+        print(f"Stripe API Error: {e}")
+        return jsonify(error=str(e)), 500
+
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=True)

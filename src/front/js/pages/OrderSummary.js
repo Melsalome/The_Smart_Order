@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import axios from 'axios';
 import PropTypes from "prop-types";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
@@ -26,29 +27,55 @@ export const OrderSummary = () => {
     const handlePaymentMethodChange = (method) => {
         setPaymentMethod(method);
     };
+    const cartItems = store.cart.map(item => ({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity
+    }));
+    const handleCheckout = () => {
+      console.log('handleCheckout called');
+      axios
+        .post(`${process.env.BACKEND_URL}/stripe/create-checkout-session`, {
+          cart: cartItems,
+        })
+        .then((response) => {
+          console.log('Response received:', response);
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        })
+        .catch((err) => console.log(err.message));
+    };
     const handleFinishOrder = async() => {
         if (!paymentMethod) {
             alert('Please choose your payment method!');
             return;
         }
-
-        try {
-            actions.addProductToTable(tableId, store.cart);
-            const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
-        console.log('Order result:', orderResult);
-        if (orderResult && orderResult.id) {
-            const orderId = orderResult.id;
-            console.log('Order ID:', orderId);
-            const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
-            // actions.clearCart();
-            navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
-        } else {
-            throw new Error('Order result is undefined or missing the order ID');
-        }
-        } catch (error) {
-            console.error('Error finishing order:', error);
-            alert('Error finishing order. Please try again.');
-        }
+        if (paymentMethod === "stripe") {
+                handleCheckout();
+                return;
+              }
+        // try {
+        //     // actions.addProductToTable(tableId, store.cart);
+        // //     const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
+        // // console.log('Order result:', orderResult);
+        // if (orderResult && orderResult.id) {
+        //     const orderId = orderResult.id;
+        //     console.log('Order ID:', orderId);
+        //     const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
+      
+        //     if (paymentMethod === "stripe") {
+        //       handleCheckout();
+        //       return;
+        //     }
+        //     navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+        // } else {
+        //     throw new Error('Order result is undefined or missing the order ID');
+        // }
+        // } catch (error) {
+        //     console.error('Error finishing order:', error);
+        //     alert('Error finishing order. Please try again.');
+        // }
      
               
                 
@@ -113,20 +140,27 @@ export const OrderSummary = () => {
           ></textarea>
         </div>
 
-                <div className="payment-method">
-                    <label htmlFor="payment">Payment Method:</label>
-                    <div className="payment-icons">
-                        <button className={paymentMethod === 'cash' ? 'selected' : ''} onClick={() => handlePaymentMethodChange('cash')}>
-                        <i class="fa-solid fa-money-bill"></i> Pay at Cashier
-                        </button>
-                    </div>
-                </div>
+        <div className="payment-method">
+          <label htmlFor="payment">Payment Method:</label>
+          <div className="payment-icons">
+            <button className={paymentMethod === 'cash' ? 'selected' : ''} onClick={() => handlePaymentMethodChange('cash')}>
+              <i className="fa-solid fa-money-bill"></i> Pay at Cashier
+            </button>
+            <button
+              className={paymentMethod === "stripe" ? "selected" : ""}
+              onClick={() => handlePaymentMethodChange("stripe")}
+            >
+              <i className="fa-solid fa-credit-card"></i> Pay with Stripe
+            </button>
+          </div>
+        </div>
                 <div className='order-finish'>
                 <Link to={`/app/generate-qr/app/restaurants/${restaurantId}/tables/${tableId}/menu`}>
                     <button className="button1">Menu</button>
                 </Link>
                     <button className='button1' onClick={handleFinishOrder}>Finish</button>
                 </div>
+                
             </div>
             <Footer />
         </>
