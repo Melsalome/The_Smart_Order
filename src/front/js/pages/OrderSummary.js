@@ -55,27 +55,27 @@ export const OrderSummary = () => {
                 handleCheckout();
                 return;
               }
-        // try {
-        //     // actions.addProductToTable(tableId, store.cart);
-        // //     const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
-        // // console.log('Order result:', orderResult);
-        // if (orderResult && orderResult.id) {
-        //     const orderId = orderResult.id;
-        //     console.log('Order ID:', orderId);
-        //     const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
+        try {
+            actions.addProductToTable(tableId, store.cart);
+            const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
+        console.log('Order result:', orderResult);
+        if (orderResult && orderResult.id) {
+            const orderId = orderResult.id;
+            console.log('Order ID:', orderId);
+            const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
       
-        //     if (paymentMethod === "stripe") {
-        //       handleCheckout();
-        //       return;
-        //     }
-        //     navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
-        // } else {
-        //     throw new Error('Order result is undefined or missing the order ID');
-        // }
-        // } catch (error) {
-        //     console.error('Error finishing order:', error);
-        //     alert('Error finishing order. Please try again.');
-        // }
+            if (paymentMethod === "stripe") {
+              handleCheckout();
+              return;
+            }
+            navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+        } else {
+            throw new Error('Order result is undefined or missing the order ID');
+        }
+        } catch (error) {
+            console.error('Error finishing order:', error);
+            alert('Error finishing order. Please try again.');
+        }
      
               
                 

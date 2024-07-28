@@ -89,7 +89,7 @@ const Layout = () => {
           <Route element={<Menu />} path="/app/generate-qr/app/restaurants/:restaurantId/tables/:tableId/menu" />
           <Route element={<OrderSummary />} path="/restaurants/:restaurantId/tables/:tableId/order-summary" />
           <Route element={<OrderSuccess />} path="/restaurants/:restaurantId/tables/:tableId/order-success" />
-          <Route element={<SuccessPage />} path="/order-success" />
+          <Route element={<SuccessPage />} path="/app/generate-qr/order-success" />
           <Route element={<h1>Not found!</h1>} />
         </Routes>
         <SidebarController />

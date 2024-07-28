@@ -31,14 +31,17 @@ from api.models import db
 
 
 
-# Allow CORS requests to this API
+# Stripe key
 stripe.api_key = 'sk_test_51PaxPIEdozExyOoProFDb9OTycMh7nC44AE5c4WUsM03ThePQ66PnNmlA9aMDbVkAXsf4wKA9gww7xSNL4c3mqFl00VuhjvXqw'
 
-# Configura la extensión Flask-JWT-Extended
+# Configura la url
 load_dotenv()
-frontend_url = os.getenv('FRONTEND_URL')
-print(f"Frontend URL: {frontend_url}")
-# from api.models import Person
+ENV = os.getenv('ENV','development')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+BACKEND_URL = os.getenv('BACKEND_URL')
+print(f"Frontend URL: {FRONTEND_URL}")
+print(f"Backend URL: {BACKEND_URL}")
+print(os.getenv('FRONTEND_URL'))
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
@@ -133,7 +136,7 @@ def serve_any_other_file(path):
 
 #     return send_file(buffer, mimetype='image/png', as_attachment=True, download_name=f"qr_restaurant_{restaurant_id}_table_{table_id}.png")
 def generate_qr_code(restaurant_id, table_id):
-    url = f"${process.env.BACKEND_URL}/app/restaurants/{restaurant_id}/tables/{table_id}/menu"
+    url = f"${BACKEND_URL}/app/restaurants/{restaurant_id}/tables/{table_id}/menu"
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -180,18 +183,18 @@ def create_checkout_session():
             'product_data': {
                 'name': item['name'],
             },
-            'unit_amount': int(item['price'] * 100),  # Convert dollars to cents
+            'unit_amount': int(item['price'] * 100),  
         },
         'quantity': item['quantity'],
     } for item in cart]
-    success_url=f"${frontend_url}/order-success"
+    success_url=f"{FRONTEND_URL}/order-success"
     print(f"Success URL: {success_url}")
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
-            success_url=f"https://orange-space-zebra-v665gxxj96qrh6g96-3000.app.github.dev/order-success", 
+            success_url=success_url, 
         )
         return jsonify({'url': session.url})
     except Exception as e:
