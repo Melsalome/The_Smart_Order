@@ -66,9 +66,10 @@ export const OrderSummary = () => {
       
             if (paymentMethod === "stripe") {
               handleCheckout();
+              navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
               return;
             }
-            navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+            
         } else {
             throw new Error('Order result is undefined or missing the order ID');
         }
