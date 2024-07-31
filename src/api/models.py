@@ -172,6 +172,7 @@ class Order(db.Model):
     table_id = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String(255), nullable=True)
     payment_method = db.Column(db.String(50), nullable=False)
+    payment_status = db.Column(db.String(50), nullable=False, default='pending')
     total_price = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     order_items = db.relationship('OrderItem', backref='order', lazy=True)

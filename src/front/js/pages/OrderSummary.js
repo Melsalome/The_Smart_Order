@@ -46,43 +46,71 @@ export const OrderSummary = () => {
         })
         .catch((err) => console.log(err.message));
     };
-    const handleFinishOrder = async() => {
-        if (!paymentMethod) {
-            alert('Please choose your payment method!');
-            return;
-        }
-        if (paymentMethod === "stripe") {
-                handleCheckout();
-                return;
-              }
-        try {
-            actions.addProductToTable(tableId, store.cart);
-            const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
-        console.log('Order result:', orderResult);
-        if (orderResult && orderResult.id) {
-            const orderId = orderResult.id;
-            console.log('Order ID:', orderId);
-            const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
+    // const handleFinishOrder = async() => {
+    //     if (!paymentMethod) {
+    //         alert('Please choose your payment method!');
+    //         return;
+    //     }
+    //     if (paymentMethod === "stripe") {
+    //             handleCheckout();
+    //             return;
+    //           }
+    //     try {
+    //         actions.addProductToTable(tableId, store.cart);
+    //         const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
+    //     console.log('Order result:', orderResult);
+    //     if (orderResult && orderResult.id) {
+    //         const orderId = orderResult.id;
+    //         console.log('Order ID:', orderId);
+    //         const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
       
-            if (paymentMethod === "stripe") {
-              handleCheckout();
-              navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
-              return;
-            }
+    //         if (paymentMethod === "stripe") {
+    //           handleCheckout();
+    //           navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+    //           return;
+    //         }
             
-        } else {
-            throw new Error('Order result is undefined or missing the order ID');
-        }
-        } catch (error) {
-            console.error('Error finishing order:', error);
-            alert('Error finishing order. Please try again.');
-        }
+    //     } else {
+    //         throw new Error('Order result is undefined or missing the order ID');
+    //     }
+    //     } catch (error) {
+    //         console.error('Error finishing order:', error);
+    //         alert('Error finishing order. Please try again.');
+    //     }
      
               
                 
-            }
+    //         }
      
-    
+    const handleFinishOrder = async () => {
+      if (!paymentMethod) {
+        alert('Please choose your payment method!');
+        return;
+      }
+  
+      try {
+        await actions.addProductToTable(tableId, store.cart);
+  
+        const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
+        if (orderResult && orderResult.id) {
+          const orderId = orderResult.id;
+  
+          const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
+  
+          if (paymentMethod === "stripe") {
+            handleCheckout();
+          } else if (paymentMethod === "cash") {
+            navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+          }
+        } else {
+          throw new Error('Order result is undefined or missing the order ID');
+        }
+      } catch (error) {
+        console.error('Error finishing order:', error);
+        alert('Error finishing order. Please try again.');
+      }
+    };
+  
     return (
         <>
             <Navbar />
