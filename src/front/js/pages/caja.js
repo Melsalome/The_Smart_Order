@@ -25,13 +25,13 @@ const Caja = () => {
     const [productPrices, setProductPrices] = useState([]);
     const [paidAmount, setPaidAmount] = useState(0);
     const totalToPay = activeSession.products.reduce((acc, product) => acc + (product.price * product.quantity), 0);
-    const navigate = useNavigate();
     const payInputRef = useRef(null);
     const [isSessionClosed, setIsSessionClosed] = useState(false);
     const [tableList, setTableList] = useState([]);
     const [mostrarModal, setMostrarModal] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalInsufficientPaymentVisible, setModalInsufficientPaymentVisible] = useState(false);
+    
 
 
     const recuperarEstado = async () => {
@@ -59,6 +59,7 @@ const Caja = () => {
     };
     useEffect(() => {
         fetchData();
+
     }, []);
 
     const abrirModal = () => {

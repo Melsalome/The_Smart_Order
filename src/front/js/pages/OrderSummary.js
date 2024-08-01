@@ -24,86 +24,88 @@ export const OrderSummary = () => {
   };
 
 
-    const handlePaymentMethodChange = (method) => {
-        setPaymentMethod(method);
-    };
-    const cartItems = store.cart.map(item => ({
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity
-    }));
-    const handleCheckout = () => {
-      console.log('handleCheckout called');
-      axios
-        .post(`${process.env.BACKEND_URL}/stripe/create-checkout-session`, {
-          cart: cartItems,
-        })
-        .then((response) => {
-          console.log('Response received:', response);
-          if (response.data.url) {
-            window.location.href = response.data.url;
-            setPaymentStatus('payed')
-          }
-        })
-        .catch((err) => console.log(err.message));
-    };
-   
-     
-    const handleFinishOrder = async () => {
-      if (!paymentMethod) {
-        alert('Please choose your payment method!');
-        return;
-      }
-      if (paymentMethod === "stripe") {
-        handleCheckout();
-      } else if (paymentMethod === "cash") {
-        navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
-      }
-      try {
-        if (paymentStatus === 'payed') {
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+  };
+  const cartItems = store.cart.map(item => ({
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity
+  }));
+
+  const handleCheckout = () => {
+    console.log('handleCheckout called');
+    axios
+      .post(`${process.env.BACKEND_URL}/stripe/create-checkout-session`, {
+        cart: cartItems,
+      })
+      .then((response) => {
+        console.log('Response received:', response);
+        if (response.data.url) {
+          window.location.href = response.data.url;
+          setPaymentStatus('payed')
+        }
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+
+  const handleFinishOrder = async () => {
+    if (!paymentMethod) {
+      alert('Please choose your payment method!');
+      return;
+    }
+    if (paymentMethod === "stripe") {
+      handleCheckout();
+    } else if (paymentMethod === "cash") {
+      navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+    }
+    try {
+      if (paymentStatus === 'payed') {
         await actions.addProductToTable(tableId, store.cart);
-  
+
         const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice, paymentStatus);
         if (orderResult && orderResult.id) {
           const orderId = orderResult.id;
-  
+
           // const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
-  
+
         } else {
           throw new Error('Order result is undefined or missing the order ID');
         }
       } else {
         await actions.addProductToTable(tableId, store.cart);
-  
+
         const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
         if (orderResult && orderResult.id) {
           const orderId = orderResult.id;
-  
+
           const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
         } else {
           throw new Error('Order result is undefined or missing the order ID');
         }
-      }} catch (error) {
-        console.error('Error finishing order:', error);
-        alert('Error finishing order. Please try again.');
       }
-    };
-  
-    return (
-        <>
-            <Navbar />
-            <div className="order-summary">
-                <h2>Order Summary</h2>
-                <ul>
-                    {store.cart.map((meal, index) => (
-                        <li key={index}>
-                            <div>{meal.name}</div>
-                            <div>x {meal.quantity}</div>
-                            <div className="butt">
-                            {meal.quantity === 1 ? (
-                <>
+    } catch (error) {
+      console.error('Error finishing order:', error);
+      alert('Error finishing order. Please try again.');
+    }
+  };
+
+  return (
+    <>
+      <Navbar />
+      <div className="order-summary">
+        <h2>Order Summary</h2>
+        <ul>
+          {store.cart.map((meal, index) => (
+            <li key={index}>
+              <div>{meal.name}</div>
+              <div>x {meal.quantity}</div>
+              <div className="butt">
+                {meal.quantity === 1 ? (
+                  <>
                     <button className='trash-icon' onClick={() => actions.removeItem(meal.id)}>
-                    <i className="fa-solid fa-trash fa-xs"></i>
+                      <i className="fa-solid fa-trash fa-xs"></i>
                     </button>
                     <button
                       className="butt1"
@@ -157,21 +159,21 @@ export const OrderSummary = () => {
               className={paymentMethod === "stripe" ? "selected" : ""}
               onClick={() => handlePaymentMethodChange("stripe")}
             >
-              <i className="fa-solid fa-credit-card"></i> Pay with Stripe
+              <i className="fa-solid fa-credit-card"></i> Pay with Card
             </button>
           </div>
         </div>
-                <div className='order-finish'>
-                <Link to={`/app/generate-qr/app/restaurants/${restaurantId}/tables/${tableId}/menu`}>
-                    <button className="button1">Menu</button>
-                </Link>
-                    <button className='button1' onClick={handleFinishOrder}>Finish</button>
-                </div>
-                
-            </div>
-            <Footer />
-        </>
-    );
+        <div className='order-finish'>
+          <Link to={`/app/generate-qr/app/restaurants/${restaurantId}/tables/${tableId}/menu`}>
+            <button className="button1">Menu</button>
+          </Link>
+          <button className='button1' onClick={handleFinishOrder}>Finish</button>
+        </div>
+
+      </div>
+      <Footer />
+    </>
+  );
 
 };
 

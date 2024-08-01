@@ -13,6 +13,8 @@ export const KitchenList = () => {
   useEffect(() => {
     if (restaurantId) {
       actions.getPendingOrderList(restaurantId);
+      actions.getOrder(restaurantId)
+      console.log()
     }
   }, [restaurantId]);
 

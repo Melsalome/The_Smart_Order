@@ -1,10 +1,11 @@
 
 export const dispatcherOrder = {
-    get: async(restaurantId,tableId) => {
+    get: async(restaurantId) => {
         const response = await fetch (`${process.env.BACKEND_URL}/app/restaurants/${restaurantId}/orders`, {
             method: 'GET',
             headers:{'Content-Type':'application/json'}
         })
+        console.log(response)
         return await response.json()
     },
 
