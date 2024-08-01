@@ -12,7 +12,7 @@ export const Navbar = ({onClose}) => {
 
 	useEffect(() => {
 		actions.getRestaurant(restaurantId);
-	}, [restaurantId]);
+	}, []);
 
 	return (
 		<>

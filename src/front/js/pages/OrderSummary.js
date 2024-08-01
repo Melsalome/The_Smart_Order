@@ -13,6 +13,7 @@ export const OrderSummary = () => {
   const [comment, setComment] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const { restaurantId, tableId } = useParams();
+  const [paymentStatus, setPaymentStatus] = useState("")
 
   const totalPrice = store.cart.reduce(
     (total, meal) => total + meal.price * meal.quantity,
@@ -42,6 +43,7 @@ export const OrderSummary = () => {
           console.log('Response received:', response);
           if (response.data.url) {
             window.location.href = response.data.url;
+            setPaymentStatus('payed')
           }
         })
         .catch((err) => console.log(err.message));
@@ -87,8 +89,28 @@ export const OrderSummary = () => {
         alert('Please choose your payment method!');
         return;
       }
-  
+      if (paymentMethod === "stripe") {
+        handleCheckout();
+      } else if (paymentMethod === "cash") {
+        navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+      }
       try {
+        if (paymentStatus === 'payed') {
+
+        
+        await actions.addProductToTable(tableId, store.cart);
+  
+        const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice, paymentStatus);
+        if (orderResult && orderResult.id) {
+          const orderId = orderResult.id;
+  
+          const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
+  
+          
+        } else {
+          throw new Error('Order result is undefined or missing the order ID');
+        }
+      } else {
         await actions.addProductToTable(tableId, store.cart);
   
         const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
@@ -96,16 +118,10 @@ export const OrderSummary = () => {
           const orderId = orderResult.id;
   
           const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
-  
-          if (paymentMethod === "stripe") {
-            handleCheckout();
-          } else if (paymentMethod === "cash") {
-            navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
-          }
         } else {
           throw new Error('Order result is undefined or missing the order ID');
         }
-      } catch (error) {
+      }} catch (error) {
         console.error('Error finishing order:', error);
         alert('Error finishing order. Please try again.');
       }

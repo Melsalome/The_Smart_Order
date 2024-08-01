@@ -82,13 +82,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .catch(error => console.error('Error fetching menu:', error));
             },
 
-            createOrder: async (restaurantId, tableId, comment, paymentMethod, totalPrice) => {
+            createOrder: async (restaurantId, tableId, comment, paymentMethod, totalPrice, paymentStatus) => {
                 const store = getStore()
                 const orderData = {
                     restaurant_id: restaurantId,
                     table_id: tableId,
                     comment: comment,
                     payment_method: paymentMethod,
+                    payment_status: paymentStatus,
                     total_price: totalPrice,
                     items: store.cart.map(meal => ({
                         menu_id: meal.id,
