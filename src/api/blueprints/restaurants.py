@@ -134,6 +134,7 @@ def create_order(restaurant_id, table_id):
     data = request.json
     comment = data.get('comment', '')
     payment_method = data['payment_method']
+    payment_status = data.get('payment_status', 'pending')
     status = data.get('pending')
     items = data['items']
 
@@ -145,6 +146,7 @@ def create_order(restaurant_id, table_id):
         table_id=table_id,
         comment=comment,
         payment_method=payment_method,
+        payment_status=payment_status,
         total_price=total_price,
         created_at=datetime.now(timezone.utc),
         status=status
