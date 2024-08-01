@@ -21,6 +21,7 @@ typing-extensions = "*"
 flask-jwt-extended ="*"
 qrcode = "*"
 pymysql = "*"
+stripe= "*"
 
 [requires]
 python_version = "3.12.3"

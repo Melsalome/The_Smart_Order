@@ -192,7 +192,8 @@ class Order(db.Model):
             "total_price": self.total_price,
             "created_at": self.created_at.isoformat(),
             "order_items": [item.serialize() for item in self.order_items],
-            "status": self.status
+            "status": self.status,
+            "payment_status": self.payment_status
         }
 
 class OrderItem(db.Model):
