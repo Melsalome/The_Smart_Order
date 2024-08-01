@@ -5,7 +5,6 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { Navbar } from "../component/navbar";
 import { Footer } from "../component/footer";
-import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/summary.css";
 
 export const OrderSummary = () => {
@@ -48,41 +47,7 @@ export const OrderSummary = () => {
         })
         .catch((err) => console.log(err.message));
     };
-    // const handleFinishOrder = async() => {
-    //     if (!paymentMethod) {
-    //         alert('Please choose your payment method!');
-    //         return;
-    //     }
-    //     if (paymentMethod === "stripe") {
-    //             handleCheckout();
-    //             return;
-    //           }
-    //     try {
-    //         actions.addProductToTable(tableId, store.cart);
-    //         const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
-    //     console.log('Order result:', orderResult);
-    //     if (orderResult && orderResult.id) {
-    //         const orderId = orderResult.id;
-    //         console.log('Order ID:', orderId);
-    //         const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
-      
-    //         if (paymentMethod === "stripe") {
-    //           handleCheckout();
-    //           navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
-    //           return;
-    //         }
-            
-    //     } else {
-    //         throw new Error('Order result is undefined or missing the order ID');
-    //     }
-    //     } catch (error) {
-    //         console.error('Error finishing order:', error);
-    //         alert('Error finishing order. Please try again.');
-    //     }
-     
-              
-                
-    //         }
+   
      
     const handleFinishOrder = async () => {
       if (!paymentMethod) {
@@ -96,17 +61,14 @@ export const OrderSummary = () => {
       }
       try {
         if (paymentStatus === 'payed') {
-
-        
         await actions.addProductToTable(tableId, store.cart);
   
         const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice, paymentStatus);
         if (orderResult && orderResult.id) {
           const orderId = orderResult.id;
   
-          const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
+          // const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
   
-          
         } else {
           throw new Error('Order result is undefined or missing the order ID');
         }
