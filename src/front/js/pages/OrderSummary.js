@@ -20,6 +20,10 @@ export const OrderSummary = () => {
     const query = new URLSearchParams(location.search);
     if (query.get('payment_status') === 'success') {
       setPaymentStatus('paid');
+      const savedPaymentMethod = sessionStorage.getItem('paymentMethod');
+      if (savedPaymentMethod){
+        setPaymentMethod(savedPaymentMethod)
+      }
       const savedCart = JSON.parse(sessionStorage.getItem('cart'));
       const savedComment = sessionStorage.getItem('comment');
       if (savedCart) {
@@ -43,6 +47,7 @@ export const OrderSummary = () => {
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
+    sessionStorage.setItem('paymentMethod', method);
   };
 
   const handleCheckout = () => {
