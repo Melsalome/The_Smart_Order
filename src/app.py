@@ -174,8 +174,8 @@ def generate_qr(restaurant_id, table_id):
 def create_checkout_session():
     data = request.json
     cart = data.get('cart', [])
-    # restaurant_id = data.get('restaurantId')
-    # table_id = data.get('tableId')
+    restaurant_id = data.get('restaurantId')
+    table_id = data.get('tableId')
 
     line_items = [{
         'price_data': {
@@ -187,7 +187,7 @@ def create_checkout_session():
         },
         'quantity': item['quantity'],
     } for item in cart]
-    success_url=f"{FRONTEND_URL}/order-success"
+    success_url=f"{FRONTEND_URL}/restaurants/{restaurant_id}/tables/{table_id}/order-summary?payment_status=success"
     print(f"Success URL: {success_url}")
     try:
         session = stripe.checkout.Session.create(
@@ -200,6 +200,15 @@ def create_checkout_session():
     except Exception as e:
         print(f"Stripe API Error: {e}")
         return jsonify(error=str(e)), 500
+
+@app.route('/stripe/checkout-session', methods=['GET'])
+def get_checkout_session():
+    session_id = request.args.get('session_id')
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        return jsonify({'payment_status': session.payment_status})
+    except stripe.error.StripeError as e:
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))

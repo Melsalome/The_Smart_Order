@@ -432,7 +432,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 return data;
             },
 
-
+            setCart: (cartItems) => {
+                setStore({ cart: cartItems})
+            }
 
 
         }

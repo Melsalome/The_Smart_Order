@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link,useParams } from 'react-router-dom';
 import { Navbar } from "../component/navbar";
 import { Footer } from "../component/footer";
@@ -7,12 +7,15 @@ import { Context } from '../store/appContext';
 export const OrderSuccess = () => {
     const { restaurantId, tableId} = useParams();
     const { store,actions } = useContext(Context);
+    const [paymentStatus, setPaymentStatus] = useState("")
     const handleBackToMenu = () => {
         actions.clearCart(); 
     };
     const totalPrice = store.cart.reduce((total, item) => {
         return total + (item.price * item.quantity);
     }, 0);
+
+    
     return (
         <>
             {/* <Navbar /> */}
@@ -46,3 +49,4 @@ export const OrderSuccess = () => {
         </>
     );
 };
+
