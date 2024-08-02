@@ -32,54 +32,78 @@ export const OrderSummary = () => {
       price: item.price,
       quantity: item.quantity
     }));
-    const handleCheckout = () => {
-      console.log('handleCheckout called');
-      axios
-        .post(`${process.env.BACKEND_URL}/stripe/create-checkout-session`, {
-          cart: cartItems,
-        })
-        .then((response) => {
-          console.log('Response received:', response);
-          if (response.data.url) {
-            window.location.href = response.data.url;
-          }
-        })
-        .catch((err) => console.log(err.message));
-    };
-    const handleFinishOrder = async() => {
-        if (!paymentMethod) {
-            alert('Please choose your payment method!');
-            return;
-        }
-        if (paymentMethod === "stripe") {
-                handleCheckout();
-                return;
-              }
-        try {
-            actions.addProductToTable(tableId, store.cart);
-            const orderResult = await actions.createOrder(restaurantId, tableId, comment, paymentMethod, totalPrice);
+    // const handleCheckout = () => {
+    //   console.log('handleCheckout called');
+    //   axios
+    //     .post(`${process.env.BACKEND_URL}/stripe/create-checkout-session`, {
+    //       cart: cartItems,
+    //       orderId
+    //     })
+    //     .then((response) => {
+    //       console.log('Response received:', response);
+    //       if (response.data.url) {
+    //         window.location.href = response.data.url;
+    //       }
+    //     })
+    //     .catch((err) => console.log(err.message));
+    // };
+    const handleFinishOrder = async () => {
+      if (!paymentMethod) {
+        alert('Please choose your payment method!');
+        return;
+      }
+    
+      try {
+        // Add products to table
+        await actions.addProductToTable(tableId, store.cart);
+        
+        // Create the order
+        const orderResult = await actions.createOrder(
+          restaurantId,
+          tableId,
+          comment,
+          paymentMethod,
+          totalPrice
+        );
         console.log('Order result:', orderResult);
-        if (orderResult && orderResult.id) {
-            const orderId = orderResult.id;
-            console.log('Order ID:', orderId);
-            const invoiceResult = await actions.createInvoice(restaurantId, tableId, orderId);
-      
-            if (paymentMethod === "stripe") {
-              handleCheckout();
-              return;
-            }
-            navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+    
+        if (!orderResult || !orderResult.id) {
+          throw new Error('Order result is undefined or missing the order ID');
+        }
+    
+        const orderId = orderResult.id;
+        console.log('Order ID:', orderId);
+    
+        // Create the invoice if paying at cashier or when payment method is confirmed
+        const finalizeOrder = async () => {
+          await actions.createInvoice(restaurantId, tableId, orderId);
+          navigate(`/restaurants/${restaurantId}/tables/${tableId}/order-success`);
+        };
+    
+        if (paymentMethod === "stripe") {
+          // Initiate Stripe checkout and finalize order after payment confirmation
+          axios
+            .post(`${process.env.BACKEND_URL}/stripe/create-checkout-session`, {
+              cart: cartItems,
+              orderId // Send the order ID with the request to associate it with the payment
+            })
+            .then((response) => {
+              console.log('Response received:', response);
+              if (response.data.url) {
+                // Redirect to Stripe checkout
+                window.location.href = response.data.url;
+              }
+            })
+            .catch((err) => console.log(err.message));
         } else {
-            throw new Error('Order result is undefined or missing the order ID');
+          // Handle cash payment
+          await finalizeOrder();
         }
-        } catch (error) {
-            console.error('Error finishing order:', error);
-            alert('Error finishing order. Please try again.');
-        }
-     
-              
-                
-            }
+      } catch (error) {
+        console.error('Error finishing order:', error);
+        alert('Error finishing order. Please try again.');
+      }
+    };
      
     
     return (

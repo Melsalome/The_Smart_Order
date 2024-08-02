@@ -33,7 +33,7 @@ from api.models import db
 
 # Stripe key
 stripe.api_key = 'sk_test_51PaxPIEdozExyOoProFDb9OTycMh7nC44AE5c4WUsM03ThePQ66PnNmlA9aMDbVkAXsf4wKA9gww7xSNL4c3mqFl00VuhjvXqw'
-
+endpoint_secret = 'whsec_73366e61cf0589b60741d372db554746c1d0b049b2f666b7507f2eba53a6a6f2'
 # Configura la url
 load_dotenv()
 ENV = os.getenv('ENV','development')
@@ -200,6 +200,47 @@ def create_checkout_session():
     except Exception as e:
         print(f"Stripe API Error: {e}")
         return jsonify(error=str(e)), 500
+@app.route('/stripe/webhook', methods=['POST'])
+def stripe_webhook():
+    payload = request.get_data(as_text=True)
+    sig_header = request.headers.get('Stripe-Signature')
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        return jsonify({"error": "Invalid payload"}), 400
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return jsonify({"error": "Invalid signature"}), 400
+
+    # Handle the event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        # Fulfill the purchase, e.g.:
+        # - Mark the order as paid in your database
+        # - Send the order to the kitchen
+
+        handle_checkout_session(session)
+
+    # Return a response to acknowledge receipt of the event
+    return jsonify({"status": "success"}), 200
+def handle_checkout_session(session):
+    # Extract the relevant information from the session object
+    # session contains details about the completed checkout
+    print("Payment was successful.")
+    print(f"Session ID: {session['id']}")
+    # You can access other information in session, such as customer details
+    # Add logic to update your order status and send the order to the kitchen
+    # Example:
+    # order_id = session['metadata']['order_id']
+    # update_order_status(order_id, 'paid')
+    # send_order_to_kitchen(order_id)
+    pass
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))

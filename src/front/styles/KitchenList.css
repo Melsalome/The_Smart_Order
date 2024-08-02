@@ -3,11 +3,21 @@
 
 .kitchen-list {
   min-height:100%;
+  max-height: 500%;
   min-width: 100%;
-
-
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url(https://img.freepik.com/free-photo/top-view-yummy-sweet-bagels-sugar-powdered-white-desk_140725-81098.jpg?t=st=1719518207~exp=1719521807~hmac=cb403341c4105857d2652ea0ff67a7deef79a90c4f2120486080a1f43008d1a3&w=900) no-repeat;
+  background-position: left 0px bottom 50%;
+  background-size: 100%;
+  background-attachment: fixed;
+  padding-left: 150px;
   /* padding-right: 1rem; */
-  background: rgb(134, 133, 133);
+  /* background: rgb(134, 133, 133);
   width: 100%;
   min-height: 100%;
   max-height: 500%;
@@ -15,13 +25,13 @@
   flex-wrap: wrap;
 
   transition: margin-left 0.3s ease;
-  padding-left: 150px;
+  padding-left: 150px; */
 }
 
 .order-container {
 
   position: relative;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.70);
   margin: 10px;
   width: 275px;
   border-radius: 5px;
@@ -53,7 +63,7 @@
   margin: 0;
 }
 .order-header {
-  background-color: #ed4e14;
+  background-color: rgb(253, 117, 117);
   padding: 10px;
   padding-bottom: 0px;
   border-radius: 5px;
@@ -117,7 +127,7 @@ border-radius: 6px;
   margin-top: 10px;
 }
 .order-container.order-old{
-  background-color: rgb(231, 119, 119);
+  /* background-color: rgb(231, 119, 119); */
 }
 
 .name-quantity {
@@ -127,6 +137,8 @@ border-radius: 6px;
 }
 .order-date {
   text-align: center;
+  text-shadow: -1px 1px 14px rgba(0,0,0,1);
+  color: black;
 }
 
 
