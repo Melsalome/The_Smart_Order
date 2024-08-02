@@ -20,8 +20,6 @@ export const OrderSummary = () => {
     const query = new URLSearchParams(location.search);
     if (query.get('payment_status') === 'success') {
       setPaymentStatus('paid');
-    } else {
-      // Restaurar el carrito y el comentario si no se ha realizado el pago
       const savedCart = JSON.parse(sessionStorage.getItem('cart'));
       const savedComment = sessionStorage.getItem('comment');
       if (savedCart) {
@@ -30,7 +28,7 @@ export const OrderSummary = () => {
       if (savedComment) {
         setComment(savedComment);
       }
-    }
+    } 
   }, [location.search]);
 
   const totalPrice = store.cart.reduce(
