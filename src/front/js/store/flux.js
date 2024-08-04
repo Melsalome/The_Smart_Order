@@ -425,6 +425,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 setStore({ orders: ordersWithTimestamp });
                 setStore({ ...store, orders: data });
                 console.log("dato en flux getPendingOrderList", data);
+                return data;
+                
             },
 
             updateOrderStatus: async (restaurantId, orderId) => {

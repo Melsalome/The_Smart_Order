@@ -720,6 +720,16 @@ display: flex;
     animation: fadeOut 0.5s forwards;
 }
 
+.payment-success-message {
+    background-color: rgba(0, 128, 0, 0.1);
+    color: green;
+    border: 2px solid green;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: bold;
+}
 @keyframes slide {
     from {
         left: -50%;

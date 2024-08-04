@@ -19,6 +19,7 @@ const Caja = () => {
     const [mostrarCalculadora, setMostrarCalculadora] = useState(false);
     const { store, actions } = useContext(Context);
     const [activeSession, setActiveSession] = useState({ id_table: 1, products: [] });
+    const [orderList, setOrderList] = useState([])
     const [loading, setLoading] = useState(true);
     const [selectedTable, setSelectedTable] = useState(null);
     const [mesaSeleccionada, setMesaSeleccionada] = useState(null);
@@ -31,7 +32,8 @@ const Caja = () => {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalInsufficientPaymentVisible, setModalInsufficientPaymentVisible] = useState(false);
-    
+
+
 
 
     const recuperarEstado = async () => {
@@ -50,12 +52,21 @@ const Caja = () => {
             console.error('Error al recuperar el estado:', error);
         }
     };
-    const fetchData = async () => {
 
+    const fetchingOrderList = async (restaurantId) => {
+        
+        const data = await actions.getPendingOrderList(restaurantId);
+        setOrderList(data);
+    }
+
+    const fetchData = async () => {
+        console.log(orderList)
         await recuperarEstado();
         await fetchProductPrices();
         await handleActiveSessionList();
         setLoading(false);
+        await fetchingOrderList(1);
+        
     };
     useEffect(() => {
         fetchData();
@@ -142,7 +153,7 @@ const Caja = () => {
     const handleActiveSession = async (table_number) => {
         const data = await actions.getActiveSessionTable(table_number);
         if (!data.products || !Array.isArray(data.products)) {
-            setActiveSession({ table_number: table_number, products: [] });
+            setActiveSession({ table_number: table_number, products: [], payment_status: 'pending' });
             setIsSessionClosed(false)
             return;
         }
@@ -164,9 +175,12 @@ const Caja = () => {
             return acc;
         }, {});
 
-        setActiveSession({ table_number: table_number, products: Object.values(groupedProducts) });
+        const order = orderList.find(order => order.table_id === table_number);
+        const payment_status = order ? order.payment_status : 'pending';
+        setActiveSession({ table_number: table_number, products: Object.values(groupedProducts),  payment_status });
 
     };
+
 
     const handleActiveSessionList = async () => {
         const dataSessionList = await actions.getActiveSessionList();
@@ -273,6 +287,7 @@ const Caja = () => {
         return () => clearTimeout(temporizador);
     }, [mostrarModal]);
 
+    
     useEffect(() => {
         const interval = setInterval(() => {
             handleActiveSessionList()
@@ -327,6 +342,7 @@ const Caja = () => {
         );
     };
     useEffect(() => {
+        console.log(activeSession)
     }, [activeSession]);
     return (
         <>
@@ -340,6 +356,11 @@ const Caja = () => {
                         <div className="ticket_table">
                             <div className="ticket-view">
                                 <h5> Table number: <strong> {activeSession.table_number}</strong></h5>
+                                {activeSession.payment_status === 'paid' && (
+                                    <div className="payment-sucsess-message">
+                                        This table has been paid with card
+                                    </div>
+                                )}
                                 {activeSession.products.length === 0 && !isSessionClosed ? (
                                     <div className="empty-table-message">▶ Empty table ◀</div>
 
