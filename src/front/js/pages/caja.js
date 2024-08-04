@@ -60,14 +60,15 @@ const Caja = () => {
     }
 
     const fetchData = async () => {
-        console.log(orderList)
         await recuperarEstado();
         await fetchProductPrices();
         await handleActiveSessionList();
-        setLoading(false);
         await fetchingOrderList(1);
-
+        
+        setLoading(false);
+        
     };
+
     useEffect(() => {
         fetchData();
 
@@ -197,6 +198,8 @@ const Caja = () => {
             })
         );
     };
+   
+    
 
     const handleCloseSession = async (table_number) => {
         const closedSession = await actions.closeActiveSession(table_number);
@@ -342,7 +345,6 @@ const Caja = () => {
         );
     };
     useEffect(() => {
-        console.log(activeSession)
     }, [activeSession]);
     return (
         <>
@@ -381,10 +383,7 @@ const Caja = () => {
                             </div>
                         </div>
                     </div>
-                    {/* <div className="botones">
-                        <button onClick={abrirCaja} className="boton-abrir-caja">Open Cash<img src={iconoLlave} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
-                        <button className="boton-pagar" onClick={manejarClickPagar}>Pay <br /><img src={iconoPagar} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
-                    </div> */}
+                    
                     <div className="botones">
                         <button onClick={abrirCaja} className="boton-abrir-caja">Open Cash<img src={iconoLlave} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
                         {activeSession.payment_status === 'paid' ? (
