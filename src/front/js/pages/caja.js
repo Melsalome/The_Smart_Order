@@ -54,7 +54,7 @@ const Caja = () => {
     };
 
     const fetchingOrderList = async (restaurantId) => {
-        
+
         const data = await actions.getPendingOrderList(restaurantId);
         setOrderList(data);
     }
@@ -66,7 +66,7 @@ const Caja = () => {
         await handleActiveSessionList();
         setLoading(false);
         await fetchingOrderList(1);
-        
+
     };
     useEffect(() => {
         fetchData();
@@ -177,7 +177,7 @@ const Caja = () => {
 
         const order = orderList.find(order => order.table_id === table_number);
         const payment_status = order ? order.payment_status : 'pending';
-        setActiveSession({ table_number: table_number, products: Object.values(groupedProducts),  payment_status });
+        setActiveSession({ table_number: table_number, products: Object.values(groupedProducts), payment_status });
 
     };
 
@@ -287,7 +287,7 @@ const Caja = () => {
         return () => clearTimeout(temporizador);
     }, [mostrarModal]);
 
-    
+
     useEffect(() => {
         const interval = setInterval(() => {
             handleActiveSessionList()
@@ -356,11 +356,7 @@ const Caja = () => {
                         <div className="ticket_table">
                             <div className="ticket-view">
                                 <h5> Table number: <strong> {activeSession.table_number}</strong></h5>
-                                {activeSession.payment_status === 'paid' && (
-                                    <div className="payment-sucsess-message">
-                                        This table has been paid with card
-                                    </div>
-                                )}
+
                                 {activeSession.products.length === 0 && !isSessionClosed ? (
                                     <div className="empty-table-message">▶ Empty table ◀</div>
 
@@ -373,6 +369,11 @@ const Caja = () => {
                                         </div>
                                     ))
                                 )}
+                                {activeSession.payment_status === 'paid' && (
+                                    <div className="payment-success-message">
+                                        This table has been paid with card
+                                    </div>
+                                )}
                             </div>
                             <div className="total--price">
                                 <div className="total--price-tittle">Total:</div>
@@ -380,10 +381,19 @@ const Caja = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="botones">
+                    {/* <div className="botones">
                         <button onClick={abrirCaja} className="boton-abrir-caja">Open Cash<img src={iconoLlave} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
                         <button className="boton-pagar" onClick={manejarClickPagar}>Pay <br /><img src={iconoPagar} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
+                    </div> */}
+                    <div className="botones">
+                        <button onClick={abrirCaja} className="boton-abrir-caja">Open Cash<img src={iconoLlave} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
+                        {activeSession.payment_status === 'paid' ? (
+                            <button className="boton-pagar" onClick={() => handleCloseSession(activeSession.table_number)}>Close Table Session</button>
+                        ) : (
+                            <button className="boton-pagar" onClick={manejarClickPagar}>Pay <br /><img src={iconoPagar} alt="Atrás" style={{ width: '35px', height: '35px' }} /></button>
+                        )}
                     </div>
+
                 </div>
 
                 {!mostrarCarta && !mostrarCalculadora ? (

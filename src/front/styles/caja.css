@@ -76,7 +76,8 @@ section {
     padding: 5px;
     border: 2px solid rgb(122, 122, 122);
     border-radius: 6px;
-    height: 88.2%;
+    /* height: 88.2%; */
+    height: 100%;
     width: 98%;
     display: flex;
     flex-direction: column;
@@ -721,6 +722,7 @@ display: flex;
 }
 
 .payment-success-message {
+    margin-top: auto;
     background-color: rgba(0, 128, 0, 0.1);
     color: green;
     border: 2px solid green;
