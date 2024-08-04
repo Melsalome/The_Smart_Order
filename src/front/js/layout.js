@@ -86,7 +86,7 @@ const Layout = () => {
           <Route element={<AboutUs />} path="/app/about-us" />
           <Route element={<ProtectedRoute roles="admin"><GenerateQR /></ProtectedRoute>} path="/app/generate-qr" />
           <Route element={<ProtectedRoute roless={['admin', 'cocina']}><KitchenList /></ProtectedRoute>} path="/app/restaurants/:restaurantId/orders" />
-          <Route element={<Menu />} path="/app/restaurants/:restaurantId/tables/:tableId/menu" />
+          <Route element={<Menu />} path="/app/generate-qr/app/restaurants/:restaurantId/tables/:tableId/menu" />
           <Route element={<OrderSummary />} path="/restaurants/:restaurantId/tables/:tableId/order-summary" />
           <Route element={<OrderSuccess />} path="/restaurants/:restaurantId/tables/:tableId/order-success" />
           <Route element={<SuccessPage />} path="/app/generate-qr/order-success" />

@@ -23,7 +23,7 @@ def generate_qr(restaurant_id, table_number):
     if not frontend_url:
         return jsonify({"error": "FRONTEND_URL is not set in the environment variables"}), 500
 
-    url = f"{frontend_url}/app/generate-qr/app/restaurants/{restaurant_id}/tables/{table_number}/menu"
+    url = f"{frontend_url}/app/restaurants/{restaurant_id}/tables/{table_number}/menu"
     try:
         img = generate_qr_image(url)
         buffer = io.BytesIO()
