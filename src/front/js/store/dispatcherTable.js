@@ -40,6 +40,7 @@ const dispatcherTable = {
         if (!response.ok) throw Error("There are no tables")
 
         const data = await response.json()
+        console.log(data)
         return data;
     },
 
