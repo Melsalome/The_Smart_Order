@@ -19,7 +19,9 @@ def generate_qr_image(url):
 
 @generateqr_bp.route('/restaurants/<int:restaurant_id>/tables/<int:table_number>/generate_qr', methods=['GET'])
 def generate_qr(restaurant_id, table_number):
+    
     frontend_url = os.getenv('FRONTEND_URL')
+    print(frontend_url, "este es el print")
     if not frontend_url:
         return jsonify({"error": "FRONTEND_URL is not set in the environment variables"}), 500
 

@@ -25,8 +25,8 @@ export const GenerateQR = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        try {
-            const response = await fetch(`${process.env.BACKEND_URL}/app/restaurants/${restaurantId}/tables/${tableNumber}/generate_qr`, {
+        try {console.log(process.env.BACKEND_URL)
+            const response = await fetch(`http://127.0.0.1:3001/app/restaurants/${restaurantId}/tables/${tableNumber}/generate_qr`, {
                 method: 'GET',
             });
 

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Navbar } from "../component/navbar";
@@ -66,6 +64,7 @@ export const Menu = () => {
     if (!sessionStorage.getItem("clientId")) {
       let newClient = await actions.createClient("anonimo");
       setClient(newClient);
+      console.log(newClient)
       sessionStorage.setItem("clientId", newClient.id);
     }
   };
@@ -81,10 +80,15 @@ export const Menu = () => {
       sessionStorage.setItem("sessionId", session.id_session);
     }
   };
-  useEffect(() => {
-    actions.getMenu();
-    createClient();
+
+  const asyncClient = async() => {
+    await createClient();
     assingClientToTable();
+  }
+  useEffect(() => {
+    
+    actions.getMenu();
+    asyncClient();
   }, [tableId, client]);
 
   const [collapsedCategories, setCollapsedCategories] = useState([]);

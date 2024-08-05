@@ -378,6 +378,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             createClient: async (name) => {
                 const data = await sesionsDispatcher.create_client(name);
+                console.log(data)
                 return data;
             },
             assingClient: async (idTable, idClient) => {
