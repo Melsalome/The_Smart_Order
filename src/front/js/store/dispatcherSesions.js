@@ -2,8 +2,7 @@ import React from "react";
 
 const sesionsDispatcher = {
   assing_client: async (idTable, idClient) => {
-    const response = await fetch(
-      `${process.env.BACKEND_URL}/app/tables/${idTable}/${idClient}/client`,
+    const response = await fetch(`${process.env.BACKEND_URL}/app/tables/${idTable}/${idClient}/client`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
