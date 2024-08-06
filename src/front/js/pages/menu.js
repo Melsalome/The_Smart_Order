@@ -84,12 +84,13 @@ export const Menu = () => {
   const asyncClient = async() => {
     await createClient();
     assingClientToTable();
+    
   }
   useEffect(() => {
     
     actions.getMenu();
     asyncClient();
-  }, [tableId, client]);
+  }, [tableId]);
 
   const [collapsedCategories, setCollapsedCategories] = useState([]);
 
