@@ -133,10 +133,40 @@ export const OrderSummary = () => {
       <div className="order-summary">
         <h2>Order Summary</h2>
         <ul>
-          {store.cart.map((meal, index) => (
-            <li key={index}>
-              <div>{meal.name}</div>
-              <div>x {meal.quantity}</div>
+        {store.cart.map((meal, index) => (
+                        <li key={index}>
+                            <div>{meal.name}</div>
+                            <div>x {meal.quantity}</div>
+                            <div className="butt">
+                            {meal.quantity === 1 ? (
+                <>
+                    <button className='trash-icon' onClick={() => actions.removeItem(meal.id)}>
+                    <i className="fa-solid fa-trash fa-xs"></i>
+                    </button>
+                    <button
+                      className="butt1"
+                      onClick={() => actions.addToCart(meal)}
+                    >
+                      +
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="butt1"
+                      onClick={() => actions.removeFromCart(meal.id)}
+                    >
+                      −
+                    </button>
+                    <button
+                      className="butt1"
+                      onClick={() => actions.addToCart(meal)}
+                    >
+                      +
+                    </button>
+                  </>
+                )}
+              </div>
               <div>${(meal.price * meal.quantity).toFixed(2)}</div>
             </li>
           ))}
