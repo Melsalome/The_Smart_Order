@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from "react-router-dom";
+import moment from 'moment-timezone';
 import { Context } from "../store/appContext";
 import "../../styles/KitchenList.css";
 
@@ -30,9 +31,9 @@ export const KitchenList = () => {
           });
         }
         if (!elapsedTimes[order.id]) {
-          const createdTime = new Date(order.created_at).getTime();
-          const currentTime = new Date().getTime();
-          initialElapsedTimes[order.id] = Math.floor((currentTime - createdTime) / 1000);
+          const createdTime = moment.tz(order.created_at, "Europe/Madrid").valueOf();
+          const currentTime = moment.tz(new Date(), "Europe/Madrid").valueOf();
+          initialElapsedTimes[order.id] = Math.floor((currentTime - createdTime - 7200000) / 1000); // 7200000 ms = 2 hours
         }
       });
 
@@ -73,13 +74,15 @@ export const KitchenList = () => {
   };
 
   const formatDateTime = (timestamp) => {
-    const date = new Date(timestamp);
+    const date = moment.tz(timestamp, "Europe/Madrid").toDate();
+    date.setHours(date.getHours() + 2);
     const options = {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false, // Asegura que la hora se muestra en formato 24 horas
     };
     return date.toLocaleDateString(undefined, options);
   };
