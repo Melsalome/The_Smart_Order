@@ -99,11 +99,11 @@
   width: 90%;
 border-radius: 6px;
   /* padding: 10px; */
-  background-color: #ED4E14;
+  background-color: #33ca05;
   /* margin-bottom: 12px; */
 }
 .done-button.done {
-  background-color: rgb(255, 77, 0);
+  background-color: rgb(60, 255, 0);
   fill: white;
 }
 .order-controls {
@@ -112,9 +112,9 @@ border-radius: 6px;
   align-items: center;
   margin-top: 10px;
 }
-/* .order-container.order-old{
-  background-color: rgb(231, 119, 119);
-} */
+.order-container.order-old{
+  background-color: rgba(247, 2, 2, 0.644);
+}
 .name-quantity {
   display: flex;
   justify-content: space-between;

@@ -133,7 +133,7 @@ export const KitchenList = () => {
       {store.orders.map((order) => {
         const isOrderCompleted = toggleOrderCompleted(order.id);
         const elapsedTime = elapsedTimes[order.id] || 0;
-        const isOlderThanOneMinutes = elapsedTime > 300;
+        const isOlderThanOneMinutes = elapsedTime > 500;
 
         const visibleItems = expandedOrder === order.id ? order.order_items : order.order_items.slice(0, 3);
 
