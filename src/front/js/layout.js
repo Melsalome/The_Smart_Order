@@ -39,7 +39,7 @@ const SidebarController = () => {
   if (token) {
     decodedToken = jwtDecode(token);
   }
-  
+
   const pathsToShowSidebar = [
     "/app/caja",
     "/app/mesas",
