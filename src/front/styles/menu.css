@@ -2,10 +2,6 @@ body {
     background-image: none; 
     background-color: white !important; 
 }
-.main-image{
-  position: relative;
-  z-index: 1;
-}
 .summary {
     text-align: center;
     max-width: 45rem;
@@ -51,9 +47,6 @@ body {
     margin-left: auto;
   }
   .meals {
-    /* top: -15rem; */
-    z-index: 100;
-    position: relative;
     max-width: 60rem;
     width: 90%;
     margin: 2rem auto;
@@ -79,7 +72,6 @@ body {
     }
   }
   .card {
-    margin: 0;
     padding: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     border-radius: 14px;
@@ -135,9 +127,6 @@ body {
       padding: 0.5rem;
     }
   
-    .card{
-      margin: 0;
-    }
     .meal {
       flex-direction: column;
       align-items: flex-start;
@@ -194,9 +183,6 @@ body {
       margin-top: -5rem;
     }
   
-    .card{
-      margin: 0;
-    }
     .meal {
       margin: 0.5rem;
     }
@@ -214,9 +200,6 @@ body {
   @media (min-width: 769px) and (max-width: 1024px) {
     .summary {
       margin-top: -7rem;
-    }
-    .card{
-      margin: 0;
     }
   
     .order-summary {
