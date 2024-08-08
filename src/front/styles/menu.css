@@ -135,6 +135,9 @@ body {
       padding: 0.5rem;
     }
   
+    .card{
+      margin: 0;
+    }
     .meal {
       flex-direction: column;
       align-items: flex-start;
@@ -191,6 +194,9 @@ body {
       margin-top: -5rem;
     }
   
+    .card{
+      margin: 0;
+    }
     .meal {
       margin: 0.5rem;
     }
@@ -208,6 +214,9 @@ body {
   @media (min-width: 769px) and (max-width: 1024px) {
     .summary {
       margin-top: -7rem;
+    }
+    .card{
+      margin: 0;
     }
   
     .order-summary {
