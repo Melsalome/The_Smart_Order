@@ -182,12 +182,11 @@ export const KitchenList = () => {
             <p className='order-date'>{formatDateTime(order.created_at)}</p>
             <ul className="order-items-list">
               {visibleItems.map((item) => (
-                <li
-                  key={item.id}
-                  className={`order-item ${completedItems[order.id]?.[item.id] ? 'completed' : ''}`}
-                  onClick={() => toggleItemCompleted(order.id, item.id)}
-                >
-                  <div className='name-quantity'>
+                <li key={item.id} className={`order-item ${completedItems[order.id]?.[item.id] ? 'completed' : ''}`}>
+                  <div
+                    className='name-quantity'
+                    onClick={() => toggleItemCompleted(order.id, item.id)}
+                  >
                     <span><b>{item.quantity}</b></span>
                     <span>{item.name}</span>
                   </div>
@@ -201,7 +200,6 @@ export const KitchenList = () => {
                 </li>
               ))}
             </ul>
-
             {expandedOrder === order.id && (
               <div className='order-footer'>
                 <button
