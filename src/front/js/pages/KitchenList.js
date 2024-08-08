@@ -133,7 +133,7 @@ export const KitchenList = () => {
       {store.orders.map((order) => {
         const isOrderCompleted = toggleOrderCompleted(order.id);
         const elapsedTime = elapsedTimes[order.id] || 0;
-        const isOlderThanOneMinutes = elapsedTime > 500;
+        const isOlderThanOneMinutes = elapsedTime > 600;
 
         const visibleItems = expandedOrder === order.id ? order.order_items : order.order_items.slice(0, 3);
 
@@ -182,7 +182,11 @@ export const KitchenList = () => {
             <p className='order-date'>{formatDateTime(order.created_at)}</p>
             <ul className="order-items-list">
               {visibleItems.map((item) => (
-                <li key={item.id} className={`order-item ${completedItems[order.id]?.[item.id] ? 'completed' : ''}`}>
+                <li
+                  key={item.id}
+                  className={`order-item ${completedItems[order.id]?.[item.id] ? 'completed' : ''}`}
+                  onClick={() => toggleItemCompleted(order.id, item.id)}
+                >
                   <div className='name-quantity'>
                     <span><b>{item.quantity}</b></span>
                     <span>{item.name}</span>
@@ -197,6 +201,7 @@ export const KitchenList = () => {
                 </li>
               ))}
             </ul>
+
             {expandedOrder === order.id && (
               <div className='order-footer'>
                 <button

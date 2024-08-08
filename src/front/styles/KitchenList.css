@@ -72,9 +72,13 @@
   width: 29%;
 }
 .order-item {
+  background: rgb(250, 252, 228);
+  padding: 7px;
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
+  border: 2px solid #000000;
+  border-radius: 5px;
 }
 .order-item label {
   display: flex;
@@ -119,9 +123,12 @@ border-radius: 6px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
+  padding-left: 6px;
+  font-weight: bold;
 }
 .order-date {
   text-align: center;
   text-shadow: -1px 1px 14px rgba(0,0,0,1);
   color: black;
+  height: 1px;
 }
